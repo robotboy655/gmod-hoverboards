@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "Half_Pipe"
+	"model" 1
+	"$envmapmode" 1
+		
+}

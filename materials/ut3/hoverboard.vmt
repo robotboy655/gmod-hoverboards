@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "UT3/hoverboard"
+	"$bumpmap" "UT3/hoverboard_normal"
+	"$phong" "1"
+	"$phongexponenttexture" "UT3/hoverboard_mask"
+	"$phongexponent" "35"
+	"$phongboost" "5"
+}
