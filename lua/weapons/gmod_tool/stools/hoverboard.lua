@@ -293,16 +293,17 @@ function TOOL.BuildCPanel( cp )
 	panel:PerformLayout( )
 	cp:AddPanel( panel )
 
+	cp:AddControl( "Slider", { Label = "Hover Height", Min = 36, Max = 100, Command = "hoverboard_height" } ):GetParent():DockPadding( 10, 0, 10, 0 )
+	cp:AddControl( "Checkbox", { Label = "Mouse Control", Command = "hoverboard_mousecontrol" } )
+	cp:AddControl( "Checkbox", { Label = "Boost Shake", Command = "hoverboard_boostshake" } )
+
 	cp:AddControl( "Color", { Label = "Trail Color", Red = "hoverboard_trail_r", Green = "hoverboard_trail_g", Blue = "hoverboard_trail_b", ShowAlpha = "0", ShowHSV = "1", ShowRGB = "1" } )
 	cp:AddControl( "Color", { Label = "Boost Color", Red = "hoverboard_boost_r", Green = "hoverboard_boost_g", Blue = "hoverboard_boost_b", ShowAlpha = "0", ShowHSV = "1", ShowRGB = "1" } )
 	cp:AddControl( "Color", { Label = "Recharge Color", Red = "hoverboard_recharge_r", Green = "hoverboard_recharge_g", Blue = "hoverboard_recharge_b", ShowAlpha = "0", ShowHSV = "1", ShowRGB = "1" } )
 
 	cp:AddControl( "Slider", { Label = "Trail Size", Min = 0, Max = 10, Command = "hoverboard_trail_size" } )
-	cp:AddControl( "Slider", { Label = "Hover Height", Min = 36, Max = 100, Command = "hoverboard_height" } )
-	cp:AddControl( "Slider", { Label = "View Distance", Min = 64, Max = 256, Command = "hoverboard_viewdist" } )
+	cp:AddControl( "Slider", { Label = "View Distance", Min = 64, Max = 256, Command = "hoverboard_viewdist" } ):GetParent():DockPadding( 10, 0, 10, 0 )
 
-	cp:AddControl( "Checkbox", { Label = "Mouse Control", Command = "hoverboard_mousecontrol" } )
-	cp:AddControl( "Checkbox", { Label = "Boost Shake", Command = "hoverboard_boostshake" } )
 	cp:AddControl( "Checkbox", { Label = "#tool.hoverboard.lights", Command = "hoverboard_lights", Help = true } )
 
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can Fall From Hoverboard?", Command = "sv_hoverboard_canfall" } )
