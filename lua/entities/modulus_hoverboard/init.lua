@@ -165,7 +165,7 @@ function ENT:SetDriver( pl )
 				self.Hull = ents.Create( "modulus_hoverboard_hull" )
 				self.Hull:SetAngles( boardphys:GetAngles() )
 
-				local pos = boardphys:GetPos() - boardphys:GetAngles():Up() * 4
+				local pos = boardphys:GetPos()
 				--if ( self:GetModel() == "models/squint_hoverboard/hotrod.mdl" ) then pos = pos + self:GetRight() * 16 end
 				self.Hull:SetPos( pos )
 				self.Hull:Spawn()
@@ -750,10 +750,10 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		end
 
-		-- boosting
+		-- Boosting
 		if ( self:IsBoosting() ) then forward_speed = forward_speed * 1.5 end
 
-		-- move forward
+		-- Move forward
 		if ( driver:KeyDown( IN_FORWARD ) && self.Contacts >= 1 ) then
 
 			local forcel, forcea = self:ApplyForwardForce( phys, -forward_speed, thruster_mass )
@@ -762,7 +762,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		end
 
-		-- move backward
+		-- Move backward
 		if ( driver:KeyDown( IN_BACK ) && self.Contacts >= 1 ) then
 
 			local forcel, forcea = self:ApplyForwardForce( phys, forward_speed, thruster_mass )
@@ -771,7 +771,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		end
 
-		-- grind?
+		-- Grinding?
 		if ( driver:KeyDown( IN_DUCK ) or driver:KeyDown( IN_ATTACK2 ) ) then
 
 			-- grinding destroys all forces
@@ -783,12 +783,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		else
 
-			-- update grinding
 			if ( self:IsGrinding() ) then self:SetGrinding( false ) end
 
 		end
 
-		-- aerial control
+		-- Aerial control
 		if ( self.Contacts == 0 or self:IsGrinding() ) then
 
 			-- rolling
@@ -878,13 +877,12 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	end
 
-	-- apply friction
+	-- Apply friction
 	linear = linear + ( friction * deltatime * ( self:IsGrinding() && 10 or 400 ) * ( ( 1 / thrusters ) * self.Contacts ) )
 
-	-- damping
+	-- Damping
 	angular = angular + angular_damping * deltatime * 750
 
-	-- simuluate
 	return angular, linear, SIM_GLOBAL_ACCELERATION
 
 end
@@ -963,10 +961,12 @@ function ENT:Mount( pl )
 
 	self:EmitSound( self.MountSoundFile )
 
+	-- Set player angles
 	local ang = self:GetAngles()
 	ang.r = 0
 	ang:RotateAroundAxis( Vector( 0, 0, 1 ), 180 )
 	ang:RotateAroundAxis( Vector( 0, 0, 1 ), self:GetBoardRotation() )
+
 	pl:SetAngles( ang )
 	pl:SetEyeAngles( ang )
 
@@ -976,15 +976,17 @@ function ENT:UnMount( pl )
 
 	self:EmitSound( self.UnMountSoundFile )
 
-	-- set player angle
+	-- Set player angles
 	local ang = self:GetAngles()
 	ang.r = 0
 	ang:RotateAroundAxis( Vector( 0, 0, 1 ), self:GetBoardRotation() + 180 )
+
 	pl:SetAngles( ang )
 	pl:SetEyeAngles( ang )
 
 	-- Try to figure out a good position for the player
 	local pos = self:GetPos() + self:GetUp() * 8
+
 	/*local newpos = Vector(0,0,0)
 
 	local tr = util.TraceHull( {

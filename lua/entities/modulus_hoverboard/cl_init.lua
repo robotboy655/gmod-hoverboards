@@ -230,9 +230,9 @@ function ENT:Think()
 
 end
 
-function ENT:Draw()
+function ENT:Draw( flags )
 
-	self:DrawModel()
+	self:DrawModel( flags )
 
 	if ( halo.RenderedEntity() == self ) then return end
 
@@ -281,9 +281,9 @@ function ENT:Draw()
 
 end
 
-function ENT:DrawTranslucent()
+function ENT:DrawTranslucent( flags )
 
-	self:Draw()
+	self:Draw( flags )
 
 end
 

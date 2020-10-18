@@ -3,11 +3,11 @@ AddCSLuaFile()
 
 if ( SERVER ) then
 
-	CreateConVar( "sbox_maxhoverboards", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
+	CreateConVar( "sbox_maxhoverboards", 2, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_adminonly", 0, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_cansteal", 0, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_canshare", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
-	CreateConVar( "sv_hoverboard_canfall", "1", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
+	CreateConVar( "sv_hoverboard_canfall", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	--CreateConVar( "sv_hoverboard_points", "45", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 
 	/*util.AddNetworkString("rb655_hoverpoints")

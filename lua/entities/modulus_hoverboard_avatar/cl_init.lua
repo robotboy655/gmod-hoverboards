@@ -1,7 +1,7 @@
 
 include( "shared.lua" )
 
-function ENT:Draw()
+function ENT:Draw( flags )
 
 	if ( !IsValid( self:GetNWEntity( "Board" ) ) || !IsValid( self:GetNWEntity( "Board" ):GetDriver() ) || !IsValid( self:GetNWEntity( "Player" ) ) ) then return end
 
@@ -15,12 +15,12 @@ function ENT:Draw()
 		end
 	end
 
-	self:DrawModel()
+	self:DrawModel( flags )
 
 end
 
-function ENT:DrawTranslucent()
+function ENT:DrawTranslucent( flags )
 
-	self:Draw()
+	self:Draw( flags )
 
 end
