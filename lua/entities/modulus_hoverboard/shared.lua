@@ -36,56 +36,6 @@ function ENT:GetDriver()
 	return self:GetOwner()
 end
 
-
-hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, pos, ang, fov )
-
-	local ent = pl:GetNWEntity( "ScriptedVehicle" )
-
-	pl.ShouldDisableLegs = false
-	if ( !IsValid( ent ) || ent:GetClass() != "modulus_hoverboard" ) then return end
-	if ( pl:InVehicle() || !pl:Alive() || pl:GetViewEntity() != pl ) then return end
-	pl.ShouldDisableLegs = true
-
-	--ang:RotateAroundAxis( Vector( 0, 0, 1 ), ent:GetBoardRotation() )
-	local dir = ang:Forward()
-
-	local pos = ent:GetPos() + Vector( 0, 0, 64 ) - ( dir * tonumber( ent:GetViewDistance() ) )
-	local speed = ent:GetVelocity():Length() - 500
-
-	-- shake their view
-	if ( ent:IsBoosting() && speed > 0 && ent:GetBoostShake() == 1 ) then
-
-		local power = 14 * ( speed / 700 )
-
-		local x = math.Rand( -power, power ) * 0.1
-		local y = math.Rand( -power, power ) * 0.1
-		local z = math.Rand( -power, power ) * 0.1
-
-		pos = pos + Vector( x, y, z )
-
-	end
-
-	-- trace to keep it out of the walls
-	local tr = util.TraceHull( {
-		start = ent:GetPos() + Vector( 0, 0, 64 ),
-		endpos = pos,
-		filter = { ent, pl, ent:GetNWEntity( "Avatar", NULL ) },
-		mask = MASK_NPCWORLDSTATIC,
-		mins = Vector( -4, -4, -4 ),
-		maxs = Vector( 4, 4, 4 )
-	} )
-
-	-- setup view
-	local view = {
-		origin = tr.HitPos,
-		angles = dir:Angle(),
-		fov = fov,
-	}
-
-	return view
-
-end )
-
 function ENT:IsGrinding()
 
 	return self:GetNWBool( "Grinding", false )

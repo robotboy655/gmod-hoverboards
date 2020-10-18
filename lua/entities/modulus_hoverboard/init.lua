@@ -894,6 +894,16 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 end
 
+-- This is not as smooth as it could be if done clientside
+hook.Add( "SetupMove", "Hoverboards_ViewDistance", function( ply, mv, cmd )
+
+	local board = ply:GetNWEntity( "ScriptedVehicle" )
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" or cmd:GetMouseWheel() == 0 ) then return end
+
+	board:SetViewDistance( math.Clamp( board:GetViewDistance() + -cmd:GetMouseWheel() * 10, 64, 256 ) )
+
+end )
+
 hook.Add( "KeyPress", "Hoverboard_KeyPress", function( pl, in_key )
 
 	-- get the scripted vehicle

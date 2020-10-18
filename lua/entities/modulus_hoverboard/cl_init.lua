@@ -345,3 +345,55 @@ hook.Add( "ShouldDrawLocalPlayer", "hoverboards_draw", function()
 	if ( IsValid( LocalPlayer():GetNWEntity( "ScriptedVehicle" ) ) ) then return false end
 end )
 
+local ClientsideViewDistance = 0
+hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fov )
+
+	local ent = pl:GetNWEntity( "ScriptedVehicle" )
+
+	pl.ShouldDisableLegs = false -- For some legs mod?
+	if ( !IsValid( ent ) || ent:GetClass() != "modulus_hoverboard" ) then return end
+	if ( pl:InVehicle() || !pl:Alive() || pl:GetViewEntity() != pl ) then return end
+	pl.ShouldDisableLegs = true
+
+	-- Smooth the view distance
+	if ( ClientsideViewDistance <= 0 ) then ClientsideViewDistance = ent:GetViewDistance() end
+
+	local change = math.max( math.abs( ClientsideViewDistance - ent:GetViewDistance() ) / 20, 0.1 )
+	ClientsideViewDistance = math.Approach( ClientsideViewDistance, ent:GetViewDistance(), change )
+
+	-- Camera position
+	local dir = ang:Forward()
+	local pos = ent:GetPos() + Vector( 0, 0, 54 ) - ( dir * ClientsideViewDistance )
+
+	-- Shake their view
+	local speed = ent:GetVelocity():Length() - 500
+	if ( ent:IsBoosting() && speed > 0 && ent:GetBoostShake() ) then
+
+		local power = 14 * ( speed / 700 )
+
+		local x = math.Rand( -power, power ) * 0.1
+		local y = math.Rand( -power, power ) * 0.1
+		local z = math.Rand( -power, power ) * 0.1
+
+		pos = pos + Vector( x, y, z )
+
+	end
+
+	-- Keep the camera outside of walls
+	local tr = util.TraceHull( {
+		start = ent:GetPos() + Vector( 0, 0, 64 ),
+		endpos = pos,
+		filter = { ent, pl, ent:GetNWEntity( "Avatar", NULL ) },
+		mask = MASK_NPCWORLDSTATIC,
+		mins = Vector( -4, -4, -4 ),
+		maxs = Vector( 4, 4, 4 )
+	} )
+
+	return {
+		origin = tr.HitPos,
+		angles = dir:Angle(),
+		fov = fov,
+	}
+
+end )
+
