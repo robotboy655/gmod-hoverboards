@@ -688,9 +688,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 				local diff = math.NormalizeAngle( ang1.y - ang2.y )
 
 				-- calculate the delta
-				local delta = ( diff > 0 ) && 1 || -1
-				-- calculate the speed
-				speed = math.Clamp( ( 180 * delta ) - diff, -rotation_speed, rotation_speed )
+				local delta = ( diff > 0 ) && 1 or -1
+
+				-- calculate the speed, x3 to make it a lot more responsive at higher Turn attribute values
+				speed = ( 180 * delta ) - diff
+				speed = math.Clamp( speed * 3, -rotation_speed, rotation_speed )
 
 				-- we are turning.
 				if ( ( diff > 0 && diff < 150 ) or ( diff < 0 && diff > -150 ) ) then driver.IsTurning = true end
