@@ -17,12 +17,6 @@ function ENT:UpdateTransmitState()
 
 end
 
-function ENT:CanTool( pl, trace, mode )
-
-	return false
-
-end
-
 function ENT:Initialize()
 
 	self:Precache()
@@ -67,7 +61,7 @@ function ENT:Think()
 
 	end
 
-	self:NextThink( CurTime() + 0.3 )
+	self:NextThink( CurTime() + 0.1 )
 	return true
 
 end
