@@ -14,11 +14,11 @@ function PANEL:Init( )
 	self.PointsText:SetDark( true )
 	self.PointsText:SizeToContents()*/
 
-	self:AddAttribute( "Speed" )
-	self:AddAttribute( "Jump" )
-	self:AddAttribute( "Turn" )
-	self:AddAttribute( "Flip" )
-	self:AddAttribute( "Twist" )
+	self:AddAttribute( "Speed", 1, 16 )
+	self:AddAttribute( "Jump", 0, 16 )
+	self:AddAttribute( "Turn", 1, 64 )
+	self:AddAttribute( "Flip", 1, 16 )
+	self:AddAttribute( "Twist", 1, 16 )
 
 end
 
@@ -142,12 +142,12 @@ end
 
 end*/
 
-function PANEL:AddAttribute( name )
+function PANEL:AddAttribute( name, min, max )
 
 	local panel = vgui.Create( "DNumSlider", self )
 	panel:SetText( name )
-	panel:SetMin( 0 )
-	panel:SetMax( 16 )
+	panel:SetMin( min or 0 )
+	panel:SetMax( max or 16 )
 	panel:Dock( TOP )
 
 	panel:SetDark( true )
@@ -157,7 +157,7 @@ function PANEL:AddAttribute( name )
 	panel.OnValueChanged = function( slider, val )
 
 
-		val = math.Clamp( tonumber( val ), 0, 16 )
+		val = math.Clamp( tonumber( val ), slider:GetMin(), slider:GetMax() )
 		slider:SetValue( val )
 
 		/*local count = self:GetUsedPoints( slider )

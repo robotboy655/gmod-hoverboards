@@ -89,25 +89,27 @@ function TOOL:CreateBoard( trace )
 
 	if ( CLIENT ) then return true end
 
+	-- Stuff is clamped in MakeHoverboard
+
 	local pl = self:GetOwner()
 	if ( GetConVarNumber( "sv_hoverboard_adminonly" ) > 0 && !( pl:IsAdmin() or pl:IsSuperAdmin() ) ) then return false end
 
 	local model = self:GetClientInfo( "model" )
 	local mcontrol = self:GetClientNumber( "mousecontrol" )
 	local shake = self:GetClientNumber( "boostshake" )
-	local trailsize = math.Clamp( self:GetClientNumber( "trail_size" ), 0, 10 )
-	local height = math.Clamp( self:GetClientNumber( "height" ), 36, 100 )
-	local viewdist = math.Clamp( self:GetClientNumber( "viewdist" ), 64, 256 )
+	local trailsize = self:GetClientNumber( "trail_size" )
+	local height = self:GetClientNumber( "height" )
+	local viewdist = self:GetClientNumber( "viewdist" )
 	local trail = Vector( self:GetClientNumber( "trail_r" ), self:GetClientNumber( "trail_g" ), self:GetClientNumber( "trail_b" ) )
 	local boost = Vector( self:GetClientNumber( "boost_r" ), self:GetClientNumber( "boost_g" ), self:GetClientNumber( "boost_b" ) )
 	local recharge = Vector( self:GetClientNumber( "recharge_r" ), self:GetClientNumber( "recharge_g" ), self:GetClientNumber( "recharge_b" ) )
 
 	local attributes = {
-		speed = math.Clamp( self:GetClientNumber( "speed" ), 0, 15 ),
-		jump = math.Clamp( self:GetClientNumber( "jump" ), 0, 15 ),
-		turn = math.Clamp( self:GetClientNumber( "turn" ), 0, 15 ),
-		flip = math.Clamp( self:GetClientNumber( "flip" ), 0, 15 ),
-		twist = math.Clamp( self:GetClientNumber( "twist" ), 0, 15 )
+		speed = self:GetClientNumber( "speed" ),
+		jump = self:GetClientNumber( "jump" ),
+		turn = self:GetClientNumber( "turn" ),
+		flip = self:GetClientNumber( "flip" ),
+		twist = self:GetClientNumber( "twist" )
 	}
 
 	local ang = pl:GetAngles()
@@ -197,35 +199,37 @@ if ( SERVER ) then
 
 		end
 
-		hoverboard:SetControls( math.Clamp( tonumber( mcontrol ), 0, 1 ) ) // controls
-		hoverboard:SetBoostShake( math.Clamp( tonumber( shake ), 0, 1 ) ) // boost shake
-		hoverboard:SetHoverHeight( math.Clamp( tonumber( height ), 36, 100 ) ) // hover height
-		hoverboard:SetViewDistance( math.Clamp( tonumber( viewdist ), 64, 256 ) ) // view distance
-		hoverboard:SetSpring( 0.21 * ( ( 72 / height ) * ( 72 / height ) ) ) // spring
+		hoverboard:SetControls( tonumber( mcontrol ) != 0 )
+		hoverboard:SetBoostShake( tonumber( shake ) != 0 )
+		hoverboard:SetHoverHeight( math.Clamp( tonumber( height ), 36, 100 ) )
+		hoverboard:SetViewDistance( math.Clamp( tonumber( viewdist ), 64, 256 ) )
+		hoverboard:SetSpring( 0.21 * ( ( 72 / height ) * ( 72 / height ) ) )
 
 		hoverboard:SetTrailScale( math.Clamp( trailsize, 0, 10 ) * 0.3 )
 		hoverboard:SetTrailColor( trail )
 		hoverboard:SetTrailBoostColor( boost )
 		hoverboard:SetTrailRechargeColor( recharge )
 
-		//local count = 0
-		//local points = GetConVarNumber( "sv_hoverboard_points" )
+		-- DISABLED: Overall attribute limit. This belongs in a gamemode, not in a Sandbox tool
+		/*local count = 0
+		local points = GetConVarNumber( "sv_hoverboard_points" )
 
 		for k, v in pairs( attributes ) do
 
-			//local remaining = points - count
+			local remaining = points - count
 
-			//v = math.Clamp( v, 0, math.min( 16, remaining ) )
+			v = math.Clamp( v, 0, math.min( 16, remaining ) )
 
-			v = math.Clamp( v, 0, 16 )
+			--v = math.Clamp( v, 0, 16 )
 
-			//attributes[ k ] = v
+			attributes[ k ] = v
 
-			//count = count + v
+			count = count + v
 
-		end
+		end*/
 
-		/*for k, v in pairs( boardinfo[ 'bonus' ] or {} ) do
+		-- DISABLED: Per hoverboard bonus attribs
+		/*for k, v in pairs( boardinfo.bonus or {} ) do
 
 			if ( attributes[ k ] ) then
 
@@ -235,18 +239,23 @@ if ( SERVER ) then
 
 		end*/
 
-		local speed = ( attributes[ 'speed' ] * 0.1 ) * 20
-		hoverboard:SetSpeed( speed )
-		local jump = ( attributes[ 'jump' ] * 0.1 ) * 250 -- It seems to me that this should be 2500
-		hoverboard:SetJumpPower( jump )
-		local turn = ( attributes[ 'turn' ] * 0.1 ) * 25
-		hoverboard:SetTurnSpeed( turn )
-		local flip = ( attributes[ 'flip' ] * 0.1 ) * 25
+		-- Clamp the attribs, this should match the UI
+		attributes.speed = math.Clamp( attributes.speed, 1, 16 )
+		attributes.jump = math.Clamp( attributes.jump, 0, 16 )
+		attributes.turn = math.Clamp( attributes.turn, 1, 64 )
+		attributes.flip = math.Clamp( attributes.flip, 1, 16 )
+		attributes.twist = math.Clamp( attributes.twist, 1, 16 )
+
+		-- Set the attributes
+		hoverboard:SetSpeed( ( attributes.speed * 0.1 ) * 20 )
+		hoverboard:SetJumpPower( ( attributes.jump * 0.1 ) * 250 ) -- It seems to me that this should be 2500
+		hoverboard:SetTurnSpeed( ( attributes.turn * 0.1 ) * 25 )
+
+		local flip = ( attributes.flip * 0.1 ) * 25
+		local twist = ( attributes.twist * 0.1 ) * 25
 		hoverboard:SetPitchSpeed( flip )
-		local twist = ( attributes[ 'twist' ] * 0.1 ) * 25
 		hoverboard:SetYawSpeed( twist )
-		local roll = ( ( flip + twist * 0.5 ) / 50 ) * 22
-		hoverboard:SetRollSpeed( roll )
+		hoverboard:SetRollSpeed( ( ( flip + twist * 0.5 ) / 50 ) * 22 )
 
 		DoPropSpawnedEffect( hoverboard )
 
