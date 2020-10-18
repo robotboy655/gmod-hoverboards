@@ -6,6 +6,7 @@ function PANEL:Init( )
 
 	self.BoardSelect = vgui.Create( "PropSelect", self )
 	self.BoardSelect:SetConVar( "hoverboard_model" )
+	self.BoardSelect:Dock( TOP )
 	self.BoardSelect.Label:SetText( "Select Model" )
 
 	/*self.PointsText = vgui.Create( "DLabel", self )
@@ -23,27 +24,9 @@ end
 
 function PANEL:PerformLayout( )
 
-	local vspacing = 10
-	local ypos = 0
+	self:SizeToChildren( false, true )
 
-	self.BoardSelect:SetPos( 0, ypos )
-	self.BoardSelect:SetSize( self:GetWide(), 165 )
-	ypos = self.BoardSelect.Y + self.BoardSelect:GetTall() + vspacing
-
-	/*self.PointsText:SetPos( 0, ypos )
-	ypos = self.PointsText.Y + self.PointsText:GetTall() + vspacing*/
-
-	for _, panel in pairs( self.Attributes ) do
-
-		panel:SetPos( 0, ypos )
-		panel:SetSize( self:GetWide(), panel:GetTall() )
-		ypos = panel.Y + panel:GetTall() + vspacing
-
-	end
-
-	self:SetHeight( ypos )
-
-	self:UpdatePoints()
+	--self:UpdatePoints()
 
 end
 
@@ -152,12 +135,12 @@ function PANEL:GetUsedPoints( ignore )
 
 end
 
-function PANEL:UpdatePoints( )
+/*function PANEL:UpdatePoints( )
 
-	/*self.PointsText:SetText( ( "Attribute Points: %d/%s" ):format( self.AttributePoints - self:GetUsedPoints(), self.AttributePoints ) )
-	self.PointsText:SizeToContents()*/
+	self.PointsText:SetText( ( "Attribute Points: %d/%s" ):format( self.AttributePoints - self:GetUsedPoints(), self.AttributePoints ) )
+	self.PointsText:SizeToContents()
 
-end
+end*/
 
 function PANEL:AddAttribute( name )
 
@@ -165,6 +148,7 @@ function PANEL:AddAttribute( name )
 	panel:SetText( name )
 	panel:SetMin( 0 )
 	panel:SetMax( 16 )
+	panel:Dock( TOP )
 
 	panel:SetDark( true )
 	panel:SetDecimals( 0 )
