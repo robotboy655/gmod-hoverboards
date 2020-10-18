@@ -2,5 +2,10 @@
 	"title"		: "Hoverboards",
 	"type"		: "vehicle",
 	"tags"		: [ "fun", "comic" ],
-	"ignore"	: []
+	"ignore"	: [
+		".git*",
+		"*.code-workspace",
+		"*.bat",
+		"*.md"
+	]
 }
