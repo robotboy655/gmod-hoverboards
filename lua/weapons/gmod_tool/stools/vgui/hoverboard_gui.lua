@@ -60,7 +60,6 @@ function PANEL:Think()
 	if ( self.HoverboardTable ) then
 
 		local selected = GetConVarString( self.BoardSelect:ConVar() )
-
 		if ( selected != self.LastSelectedBoard ) then
 
 			self.LastSelectedBoard = selected
@@ -149,13 +148,19 @@ function PANEL:AddAttribute( name, min, max )
 	panel:SetMin( min or 0 )
 	panel:SetMax( max or 16 )
 	panel:Dock( TOP )
-
 	panel:SetDark( true )
 	panel:SetDecimals( 0 )
-	panel:SetConVar( ( "hoverboard_%s" ):format( name:lower() ) )
-	panel.Attribute = name:lower()
-	panel.OnValueChanged = function( slider, val )
+	--panel.Attribute = name:lower()
 
+	local cvarName = ( "hoverboard_%s" ):format( name:lower() )
+	panel:SetConVar( cvarName )
+
+	local cvar = GetConVar( cvarName )
+	if ( cvar ) then
+		panel:SetDefaultValue( cvar:GetDefault() )
+	end
+
+	panel.OnValueChanged = function( slider, val )
 
 		val = math.Clamp( tonumber( val ), slider:GetMin(), slider:GetMax() )
 		slider:SetValue( val )
