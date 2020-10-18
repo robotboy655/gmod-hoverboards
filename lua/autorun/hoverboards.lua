@@ -7,8 +7,8 @@ if ( SERVER ) then
 	CreateConVar( "sv_hoverboard_adminonly", 0, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_cansteal", 0, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_canshare", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
-	//CreateConVar( "sv_hoverboard_points", "45", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_canfall", "1", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
+	--CreateConVar( "sv_hoverboard_points", "45", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 
 	/*util.AddNetworkString("rb655_hoverpoints")
 	timer.Create( "HoverPointsThink", 5, 0, function()
@@ -17,7 +17,7 @@ if ( SERVER ) then
 		net.Broadcast()
 	end )*/
 
-	//CreateConVar( "rb655_force_downloads", "0", FCVAR_ARCHIVE )
+	--CreateConVar( "rb655_force_downloads", "0", FCVAR_ARCHIVE )
 
 	/*if ( GetConVarNumber( "rb655_force_downloads" ) > 0 ) then
 		resource.AddFile( "materials/modulus_hoverboard/glow.vmt" )

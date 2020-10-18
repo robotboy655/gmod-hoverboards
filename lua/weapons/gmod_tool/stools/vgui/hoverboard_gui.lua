@@ -1,7 +1,7 @@
 
 function PANEL:Init( )
 
-	//self.AttributePoints = 5
+	--self.AttributePoints = 5
 	self.Attributes = {}
 
 	self.BoardSelect = vgui.Create( "PropSelect", self )
@@ -52,7 +52,7 @@ net.Receive( "rb655_hoverpoints", function()
 	HoverPoints = tonumber( net.ReadString() )
 end )*/
 
-function PANEL:Think( )
+function PANEL:Think()
 
 	/*local points = HoverPoints
 
@@ -91,9 +91,9 @@ function PANEL:Think( )
 
 			/*for _, board in pairs( self.HoverboardTable ) do
 
-				if ( selected:lower() == board[ 'model' ]:lower() ) then
+				if ( selected:lower() == board[ "model" ]:lower() ) then
 
-					for k, v in pairs( board[ 'bonus' ] ) do
+					for k, v in pairs( board[ "bonus" ] ) do
 
 						for name, panel in pairs( self.Attributes ) do
 
@@ -124,9 +124,9 @@ function PANEL:PopulateBoards( tbl )
 
 	for _, board in pairs( tbl ) do
 
-		self.BoardSelect:AddModel( board[ 'model' ] )
+		self.BoardSelect:AddModel( board[ "model" ] )
 
-		self.BoardSelect.Controls[ #self.BoardSelect.Controls ]:SetToolTip( board[ 'name' ] or "Unknown" )
+		self.BoardSelect.Controls[ #self.BoardSelect.Controls ]:SetTooltip( board[ "name" ] or "Unknown" )
 
 	end
 

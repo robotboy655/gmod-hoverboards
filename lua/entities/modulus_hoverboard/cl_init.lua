@@ -25,7 +25,7 @@ for _, filename in pairs( effectfiles ) do
 
 	end
 
-	include( "effects/".. filename )
+	include( "effects/" .. filename )
 
 	local _, _, effectname = string.find( filename, "([%w_]*)%.lua" ) -- store
 
@@ -39,12 +39,12 @@ function ENT:Initialize()
 
 	-- hover sound
 	self.HoverSoundFile = "weapons/gauss/chargeloop.wav"
-	self.HoverSound = CreateSound( self.Entity, self.HoverSoundFile )
+	self.HoverSound = CreateSound( self, self.HoverSoundFile )
 	self.HoverSoundPlaying = false
 
 	-- grind soud
 	self.GrindSoundFile = "physics/metal/metal_grenade_scrape_smooth_loop1.wav"
-	self.GrindSound = CreateSound( self.Entity, self.GrindSoundFile )
+	self.GrindSound = CreateSound( self, self.GrindSoundFile )
 	self.GrindSoundPlaying = false
 	self.GrindSoundTime = 0
 
@@ -52,8 +52,8 @@ function ENT:Initialize()
 	self.BoostOffSoundFile = "npc/scanner/scanner_nearmiss1.wav"
 	self.BoostOnSoundFile = "npc/scanner/scanner_nearmiss2.wav"
 	self.BoostSoundFile = "ambient/levels/labs/teleport_rings_loop2.wav"
-	self.BoostSound = CreateSound( self.Entity, self.BoostSoundFile )
-	self:SetNetworkedVarProxy( "Boosting", self.BoostStateChanged )
+	self.BoostSound = CreateSound( self, self.BoostSoundFile )
+	self:SetNWVarProxy( "Boosting", self.BoostStateChanged )
 
 	-- effects list
 	self.Effects = {}
@@ -101,7 +101,7 @@ end
 function ENT:Think()
 
 	-- check grind time
-	if ( self:GetNetworkedFloat( "GrindSoundTime" ) > CurTime() ) then
+	if ( self:GetNWFloat( "GrindSoundTime" ) > CurTime() ) then
 
 		-- not playing
 		if ( !self.GrindSoundPlaying ) then
@@ -244,7 +244,7 @@ function ENT:Draw()
 			--local point = phys:LocalToWorld( self.ThrusterPoints[ i ].Pos )
 			local point = self:GetThruster( i )
 
-			local tracelen = tonumber(self.Entity:GetHoverHeight()) - ( self.ThrusterPoints[ i ].Diff or 0 )
+			local tracelen = tonumber( self:GetHoverHeight() ) - ( self.ThrusterPoints[ i ].Diff || 0 )
 
 			-- trace for solid
 			local trace = {
@@ -255,12 +255,9 @@ function ENT:Draw()
 			}
 			local tr = util.TraceLine( trace )
 
-			-- color
 			local color = Color( 128, 255, 128, 255 )
 			if ( tr.Hit ) then
-
 				color = Color( 255, 128, 128, 255 )
-
 			end
 
 			local scale = ( self.ThrusterPoints[ i ].Spring || 1 ) * 0.5
@@ -288,23 +285,21 @@ function ENT:DrawTranslucent()
 
 end
 
+local blocked = {
+	"phys_swap",
+	"slot",
+	"invnext",
+	"invprev",
+	"lastinv",
+	"gmod_tool",
+	"gmod_toolmode"
+}
 hook.Add( "PlayerBindPress", "Hoverboard_PlayerBindPress", function( pl, bind, pressed )
 
 	local board = pl:GetNWEntity( "ScriptedVehicle" )
 
 	-- make sure they are using the hoverboard
 	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
-
-	-- list to block
-	local blocked = {
-		"phys_swap",
-		"slot",
-		"invnext",
-		"invprev",
-		"lastinv",
-		"gmod_tool",
-		"gmod_toolmode"
-	}
 
 	-- loop
 	for _, block in pairs( blocked ) do
@@ -333,7 +328,7 @@ hook.Add( "HUDPaint", "Hoverboard_HUDPaint", function()
 
 			-- draw text
 			draw.SimpleText( text, "Default",
-				( ScrW() * 0.5 ), ( ScrH() * 0.5 ) + 100,
+				ScrW() * 0.5, ( ScrH() * 0.5 ) + 100,
 				Color( 255, 255, 255, 255 ),
 				TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER
 			)

@@ -11,7 +11,7 @@ function ENT:Precache( )
 
 end
 
-function ENT:UpdateTransmitState( )
+function ENT:UpdateTransmitState()
 
 	return TRANSMIT_ALWAYS
 
@@ -57,16 +57,12 @@ function ENT:Think()
 			-- the board we belong to
 			local board = self:GetOwner()
 
-			-- boot
 			board:SetDriver( NULL )
 
-			-- damage
 			local damage = self.Player:Health() * 0.9
-
-			-- inflict damage to our player
 			board:HurtDriver( damage )
 
-			self.Player:EmitSound( "Player.FallDamage" ) -- sound
+			self.Player:EmitSound( "Player.FallDamage" )
 
 		end
 
@@ -104,13 +100,10 @@ function ENT:PhysicsCollide( data, phys )
 	-- inflict damage to our player
 	board:HurtDriver( damage )
 
-	-- sound
 	self.Player:EmitSound( "Player.FallDamage" )
 
-	-- decal
 	util.Decal( "Blood", data.HitPos - data.HitNormal * 2, data.HitPos + data.HitNormal * 2 )
 
-	-- blood
 	for i = 1, 3 do
 
 		local effect = EffectData()

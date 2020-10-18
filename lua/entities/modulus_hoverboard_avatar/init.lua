@@ -32,7 +32,7 @@ function ENT:SetPlayer( pl )
 		self:SetSkin( pl:GetSkin() )
 		self.GetPlayerColor = function() return pl:GetPlayerColor() end
 
-		for i=0, pl:GetNumBodyGroups() - 1 do self:SetBodygroup( i, pl:GetBodygroup( i ) ) end
+		for i = 0, pl:GetNumBodyGroups() - 1 do self:SetBodygroup( i, pl:GetBodygroup( i ) ) end
 
 		-- Player color
 	end

@@ -1,7 +1,28 @@
 
-// basic
 TOOL.Category = "Robotboy655"
 TOOL.Name = "#tool.hoverboard.name"
+
+TOOL.ClientConVar[ "model" ] = "models/ut3/hoverboard.mdl"
+TOOL.ClientConVar[ "lights" ] = 0
+TOOL.ClientConVar[ "mousecontrol" ] = 1
+TOOL.ClientConVar[ "boostshake" ] = 1
+TOOL.ClientConVar[ "height" ] = 72
+TOOL.ClientConVar[ "viewdist" ] = 128
+TOOL.ClientConVar[ "trail_size" ] = 5
+TOOL.ClientConVar[ "trail_r" ] = 128
+TOOL.ClientConVar[ "trail_g" ] = 128
+TOOL.ClientConVar[ "trail_b" ] = 255
+TOOL.ClientConVar[ "boost_r" ] = 128
+TOOL.ClientConVar[ "boost_g" ] = 255
+TOOL.ClientConVar[ "boost_b" ] = 128
+TOOL.ClientConVar[ "recharge_r" ] = 255
+TOOL.ClientConVar[ "recharge_g" ] = 128
+TOOL.ClientConVar[ "recharge_b" ] = 128
+TOOL.ClientConVar[ "speed" ] = 10
+TOOL.ClientConVar[ "jump" ] = 10
+TOOL.ClientConVar[ "turn" ] = 10
+TOOL.ClientConVar[ "flip" ] = 10
+TOOL.ClientConVar[ "twist" ] = 5
 
 -- TO ADD NEW HOVERBOARDS, CHECK OUT THE AUTORUN FILE
 
@@ -11,20 +32,17 @@ cleanup.Register( "hoverboards" )
 
 for _, hbt in pairs( HoverboardTypes ) do
 
-	list.Set( "HoverboardModels", hbt[ 'model' ], {} )
-	util.PrecacheModel( hbt[ 'model' ] )
+	list.Set( "HoverboardModels", hbt.model, {} )
+	util.PrecacheModel( hbt.model )
 
 	if ( SERVER && GetConVarNumber( "rb655_force_downloads" ) > 0 ) then
 
-		resource.AddFile( hbt[ 'model' ] )
+		resource.AddFile( hbt.model )
 
-		if ( hbt[ 'files' ] ) then
+		-- Materials and stuff
+		if ( hbt.files ) then
 
-			for __, f in pairs( hbt[ 'files' ] ) do
-
-				resource.AddFile( f ) // send other files
-
-			end
+			for __, f in pairs( hbt.files ) do resource.AddFile( f ) end
 
 		end
 
@@ -32,27 +50,6 @@ for _, hbt in pairs( HoverboardTypes ) do
 
 end
 
-TOOL.ClientConVar[ 'model' ] = "models/UT3/hoverboard.mdl"
-TOOL.ClientConVar[ 'lights' ] = 0
-TOOL.ClientConVar[ 'mousecontrol' ] = 1
-TOOL.ClientConVar[ 'boostshake' ] = 1
-TOOL.ClientConVar[ 'height' ] = 72
-TOOL.ClientConVar[ 'viewdist' ] = 128
-TOOL.ClientConVar[ 'trail_size' ] = 5
-TOOL.ClientConVar[ 'trail_r' ] = 128
-TOOL.ClientConVar[ 'trail_g' ] = 128
-TOOL.ClientConVar[ 'trail_b' ] = 255
-TOOL.ClientConVar[ 'boost_r' ] = 128
-TOOL.ClientConVar[ 'boost_g' ] = 255
-TOOL.ClientConVar[ 'boost_b' ] = 128
-TOOL.ClientConVar[ 'recharge_r' ] = 255
-TOOL.ClientConVar[ 'recharge_g' ] = 128
-TOOL.ClientConVar[ 'recharge_b' ] = 128
-TOOL.ClientConVar[ 'speed' ] = 10
-TOOL.ClientConVar[ 'jump' ] = 10
-TOOL.ClientConVar[ 'turn' ] = 10
-TOOL.ClientConVar[ 'flip' ] = 10
-TOOL.ClientConVar[ 'twist' ] = 5
 
 function TOOL:LeftClick( trace )
 
@@ -65,16 +62,16 @@ function TOOL:RightClick( trace )
 
 	local result, hoverboard = self:CreateBoard( trace )
 
-	if ( CLIENT ) then return result end // client result
+	if ( CLIENT ) then return result end
 
-	if ( IsValid( hoverboard ) ) then // validate board
+	if ( IsValid( hoverboard ) ) then
 
-		local pl = self:GetOwner() // owner
-		local dist = ( hoverboard:GetPos() - pl:GetPos() ):Length() // check distance
+		local pl = self:GetOwner()
 
-		if ( dist <= 512 ) then // make sure its relatively close?
+		local dist = ( hoverboard:GetPos() - pl:GetPos() ):Length()
+		if ( dist <= 512 ) then
 
-			timer.Simple( 0.25, function() // had to delay it to avoid errors
+			timer.Simple( 0.25, function()
 
 				if ( IsValid( hoverboard ) && IsValid( pl ) ) then hoverboard:SetDriver( pl ) end
 
@@ -89,10 +86,11 @@ function TOOL:RightClick( trace )
 end
 
 function TOOL:CreateBoard( trace )
+
 	if ( CLIENT ) then return true end
 
 	local pl = self:GetOwner()
-	if ( GetConVarNumber( "sv_hoverboard_adminonly" ) > 0 && !( pl:IsAdmin() || pl:IsSuperAdmin() ) ) then return false end
+	if ( GetConVarNumber( "sv_hoverboard_adminonly" ) > 0 && !( pl:IsAdmin() or pl:IsSuperAdmin() ) ) then return false end
 
 	local model = self:GetClientInfo( "model" )
 	local mcontrol = self:GetClientNumber( "mousecontrol" )
@@ -143,14 +141,13 @@ if ( SERVER ) then
 		if ( IsValid( pl ) && !pl:CheckLimit( "hoverboards" ) ) then return false end
 
 		local hoverboard = ents.Create( "modulus_hoverboard" )
-
 		if ( !IsValid( hoverboard ) ) then return false end
 
+		-- Get the board info
 		local boardinfo
-
 		for _, board in pairs( HoverboardTypes ) do
 
-			if ( board[ 'model' ]:lower() == model:lower() ) then
+			if ( board.model:lower() == model:lower() ) then
 
 				boardinfo = board
 				break
@@ -158,7 +155,6 @@ if ( SERVER ) then
 			end
 
 		end
-
 		if ( !boardinfo ) then return false end
 
 		util.PrecacheModel( model )
@@ -169,11 +165,11 @@ if ( SERVER ) then
 
 		hoverboard:SetBoardRotation( 0 )
 
-		if ( boardinfo[ "rotation" ] ) then
+		if ( boardinfo.rotation ) then
 
-			local rot = tonumber( boardinfo[ "rotation" ] )
+			local rot = tonumber( boardinfo.rotation )
 
-			hoverboard:SetBoardRotation( tonumber( boardinfo[ "rotation" ] ) )
+			hoverboard:SetBoardRotation( tonumber( boardinfo.rotation ) )
 
 			ang.y = ang.y - rot
 			hoverboard:SetAngles( ang )
@@ -185,10 +181,8 @@ if ( SERVER ) then
 
 		hoverboard:SetAvatarPosition( Vector( 0, 0, 0 ) )
 
-		if ( boardinfo[ 'driver' ] ) then
-
-			hoverboard:SetAvatarPosition( boardinfo[ 'driver' ] )
-
+		if ( boardinfo.driver ) then
+			hoverboard:SetAvatarPosition( boardinfo.driver )
 		end
 
 		for k, v in pairs( boardinfo ) do
@@ -197,10 +191,7 @@ if ( SERVER ) then
 
 				local effect = boardinfo[ k ]
 
-				local normal
-				if ( effect[ 'normal' ] ) then normal = effect[ 'normal' ] end
-
-				hoverboard:AddEffect( effect[ 'effect' ] or "trail", effect[ 'position' ], normal, effect[ 'scale' ] or 1 )
+				hoverboard:AddEffect( effect.effect or "trail", effect.position, effect.normal, effect.scale or 1 )
 
 			end
 
@@ -212,8 +203,7 @@ if ( SERVER ) then
 		hoverboard:SetViewDistance( math.Clamp( tonumber( viewdist ), 64, 256 ) ) // view distance
 		hoverboard:SetSpring( 0.21 * ( ( 72 / height ) * ( 72 / height ) ) ) // spring
 
-		trailsize = math.Clamp( trailsize, 0, 10 ) * 0.3
-		hoverboard:SetTrailScale( trailsize )
+		hoverboard:SetTrailScale( math.Clamp( trailsize, 0, 10 ) * 0.3 )
 		hoverboard:SetTrailColor( trail )
 		hoverboard:SetTrailBoostColor( boost )
 		hoverboard:SetTrailRechargeColor( recharge )
@@ -287,7 +277,7 @@ local hbpanel = vgui.RegisterFile( "vgui/hoverboard_gui.lua" )
 
 function TOOL.BuildCPanel( cp )
 
-	//cp:AddControl( "PropSelect", { Label = "Hoverboard Model", Height = 3, ConVar = "hoverboard_model", Models = list.Get( "HoverboardModels" ) } )
+	--cp:AddControl( "PropSelect", { Label = "Hoverboard Model", Height = 3, ConVar = "hoverboard_model", Models = list.Get( "HoverboardModels" ) } )
 
 	local panel = vgui.CreateFromTable( hbpanel )
 	panel:PopulateBoards( HoverboardTypes )
@@ -311,6 +301,6 @@ function TOOL.BuildCPanel( cp )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can Steal?", Command = "sv_hoverboard_cansteal" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Admin Only?", Command = "sv_hoverboard_adminonly" } )
 	cp:AddControl( "Slider", { Label = "ADMIN: Max Hoverboards Per Player", Min = 1, Max = 10, Command = "sbox_maxhoverboards" } )
-	//cp:AddControl( "Slider", { Label = "ADMIN: Max Points", Min = 5, Max = 80, Command = "sv_hoverboard_points" } )
+	--cp:AddControl( "Slider", { Label = "ADMIN: Max Points", Min = 5, Max = 80, Command = "sv_hoverboard_points" } )
 
 end

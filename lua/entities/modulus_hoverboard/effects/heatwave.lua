@@ -21,7 +21,7 @@ end
 
 function EFFECT:Think()
 
-	if( !self:ShouldRender() ) then return end
+	if ( !self:ShouldRender() ) then return end
 
 	local particle = self.Emitter:Add( "sprites/heatwave", self.Board:LocalToWorld( self.Position ) )
 	particle:SetDieTime( math.Rand( 0.05, 0.15 ) )
@@ -39,7 +39,7 @@ end
 
 function EFFECT:Render()
 
-	if( !self:ShouldRender() ) then return end
+	if ( !self:ShouldRender() ) then return end
 
 	local timer = math.max( 0, math.sin( UnPredictedCurTime() ) )
 	local timer2 = math.max( 0, math.sin( UnPredictedCurTime() * 2 ) )

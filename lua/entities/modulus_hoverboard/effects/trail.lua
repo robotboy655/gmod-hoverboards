@@ -50,7 +50,7 @@ function EFFECT:Render( )
 	local count = #self.Points;
 
 	-- not enough points to draw the trail
-	if(  self.Board:IsGrinding() || self.Board:WaterLevel() > 0 ) then return end
+	if (  self.Board:IsGrinding() || self.Board:WaterLevel() > 0 ) then return end
 
 	-- alpha
 	local alpha = self:RemapValClamped( self.Board:GetBoardVelocity(), 150, 1000, 0, 255 )
@@ -107,7 +107,7 @@ function EFFECT:Render( )
 
 	local SaberLight = DynamicLight( self.Board:EntIndex() + self.ID + 566 ) -- 655 is used on lightsabers
 	if ( SaberLight ) then
-		local ent = self.Board
+		--local ent = self.Board
 		SaberLight.Pos = anchor
 		SaberLight.r = color.r
 		SaberLight.g = color.g

@@ -116,9 +116,9 @@ function ENT:SetDriver( pl )
 
 	if ( IsValid( driver ) ) then
 
-		if ( !IsValid( pl ) || GetConVarNumber( "sv_hoverboard_cansteal" ) == 1 ) then -- check if we should boot the driver
+		if ( !IsValid( pl ) or GetConVarNumber( "sv_hoverboard_cansteal" ) == 1 ) then -- check if we should boot the driver
 
-			driver:SetNWEntity("ScriptedVehicle", NULL ) -- clear it's scripted vehicle
+			driver:SetNWEntity( "ScriptedVehicle", NULL ) -- clear it's scripted vehicle
 
 			self:UnMount( driver ) -- unmount
 
@@ -149,27 +149,18 @@ function ENT:SetDriver( pl )
 	if ( IsValid( pl ) ) then
 
 		-- can we get on it?
-		if ( GetConVarNumber( "sv_hoverboard_canshare" ) < 1 ) then
-
-			if ( pl:UniqueID() != self.Creator ) then
-
-				return
-
-			end
-
+		if ( GetConVarNumber( "sv_hoverboard_canshare" ) < 1 && pl:UniqueID() != self.Creator ) then
+			return
 		end
 
-		-- stuff
 		self.PlayerMountedTime = CurTime()
 
 		-- create a hull if it doesn't exist
 		if ( !IsValid( self.Hull ) ) then
 
-			-- phys
 			local boardphys = self:GetPhysicsObject()
 			if ( IsValid( boardphys ) ) then
 
-				-- make
 				self.Hull = ents.Create( "modulus_hoverboard_hull" )
 				self.Hull:SetAngles( boardphys:GetAngles() )
 
@@ -180,7 +171,7 @@ function ENT:SetDriver( pl )
 				self.Hull:SetPlayer( pl )
 				self.Hull:SetOwner( self )
 
-				constraint.Weld( self.Hull, self, 0, 0, 0, true, true ) -- weld
+				constraint.Weld( self.Hull, self, 0, 0, 0, true, true )
 
 			end
 
@@ -191,7 +182,6 @@ function ENT:SetDriver( pl )
 		end
 
 		local weapon = pl:GetActiveWeapon()
-
 		if ( IsValid( weapon ) ) then self.OldWeapon = weapon:GetClass() end
 
 		pl:SelectWeapon( "weapon_crowbar" ) -- switch weapon
@@ -206,7 +196,6 @@ function ENT:SetDriver( pl )
 		pl.OldMoveType = pl:GetMoveType()
 		pl:SetMoveType( MOVETYPE_NOCLIP )
 
-		-- mount
 		self:Mount( pl )
 
 		-- set board velocity (allows for a running start)
@@ -216,7 +205,7 @@ function ENT:SetDriver( pl )
 			local angles = self:GetAngles()
 			angles:RotateAroundAxis( angles:Up(), self:GetBoardRotation() + 180 )
 			local forward = angles:Forward()
-			local velocity = forward:DotProduct( pl:GetVelocity() ) * forward
+			local velocity = forward:Dot( pl:GetVelocity() ) * forward
 
 			phys:SetVelocity( velocity )
 
@@ -230,7 +219,7 @@ function ENT:SetDriver( pl )
 
 	else
 
-		SafeRemoveEntity( self.Hull ) -- a player is getting off, destroy the hull
+		SafeRemoveEntity( self.Hull ) -- A player is getting off, destroy the hull
 
 	end
 
@@ -244,7 +233,7 @@ function ENT:HurtDriver( damage )
 
 	local driver = self:GetDriver() -- get driver
 
-	if ( !IsValid( driver ) || self.PlayerMountedTime == 0 || CurTime() - self.PlayerMountedTime < 1 ) then -- Validate
+	if ( !IsValid( driver ) or self.PlayerMountedTime == 0 or CurTime() - self.PlayerMountedTime < 1 ) then -- Validate
 		return
 	end
 
@@ -267,7 +256,6 @@ end
 function ENT:IsUpright( physobj )
 
 	local phys = self:GetPhysicsObject()
-
 	if ( !IsValid( phys ) ) then return end
 
 	local up = phys:GetAngles():Up()
@@ -278,7 +266,7 @@ end
 
 function ENT:OnTakeDamage( dmginfo )
 
-	self:TakePhysicsDamage( dmginfo ) -- pass to physics as forces
+	self:TakePhysicsDamage( dmginfo )
 
 end
 
@@ -288,7 +276,7 @@ local function SetPlayerAnimation( pl, anim )
 	local board = pl:GetNWEntity( "ScriptedVehicle" )
 
 	-- make sure they are using the hoverboard
-	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" ) then return end
 
 	-- select animation
 	local seq = "idle_slam"
@@ -329,21 +317,15 @@ function ENT:Think()
 	local phys = self:GetPhysicsObject()
 	if ( IsValid( phys ) ) then phys:Wake() end
 
-	local driver = self:GetDriver() -- get driver
-
-	-- validate driver
+	local driver = self:GetDriver()
 	if ( IsValid( driver ) ) then
 
 		driver:DrawWorldModel( false )
 		driver:SetNoDraw( true )
 
-		-- view entity is the driver?
-		/*if ( driver:GetViewEntity() == driver ) then
-			driver:SetViewEntity( self )
-		end*/
 
 		-- make sure driver is still around
-		if ( self:WaterLevel() > 0 || !driver:Alive() || !driver:IsConnected() ) then
+		if ( self:WaterLevel() > 0 or !driver:Alive() or !driver:IsConnected() ) then
 
 			-- give 'em the boot
 			self:SetDriver( NULL )
@@ -351,7 +333,7 @@ function ENT:Think()
 		-- make sure board is upright
 		/*elseif ( self:GetUp().z < -0.85 ) then
 			-- check if board is on ground
-			if ( self.Contacts > 0 || self:OnGround() ) then
+			if ( self.Contacts > 0 or self:OnGround() ) then
 				-- give 'em the boot
 				--self:SetDriver( NULL )
 			end*/
@@ -400,27 +382,12 @@ function ENT:Think()
 			self:SetBoost( math.Clamp( self:Boost() - 1, 0, 100 ) )
 
 			-- boost done
-			if ( self:Boost() == 0 ) then
-
-				-- reset
-				self:SetBoosting( false )
-
-			end
+			if ( self:Boost() <= 0 ) then self:SetBoosting( false ) end
 
 		else
 
-			-- hold current boost
-			local oldboost = self:Boost()
-
 			-- recharge boost
 			self:SetBoost( math.Clamp( self:Boost() + 1, 0, 100 ) )
-
-			-- boost has recharged
-			--if ( self:Boost() == 100 && oldboost < 100 ) then
-
-				-- err, wtf was you thinking? thar be nothing here!
-
-			--end
 
 		end
 
@@ -555,10 +522,10 @@ function ENT:PhysicsCollide( data, physobj )
 	if ( speed < 150 ) then return end
 
 	-- check entity
-	if ( !data.HitEntity || data.HitEntity == NULL || self:WaterLevel() > 0 ) then return end
+	if ( !data.HitEntity or data.HitEntity == NULL or self:WaterLevel() > 0 ) then return end
 
 	-- make sure its world
-	if ( data.HitEntity == game.GetWorld() || data.HitEntity:GetSolid() != SOLID_NONE ) then
+	if ( data.HitEntity == game.GetWorld() or data.HitEntity:GetSolid() != SOLID_NONE ) then
 
 		-- create effect
 		local effectdata = EffectData()
@@ -572,7 +539,7 @@ function ENT:PhysicsCollide( data, physobj )
 		util.Effect( "sparks", effectdata, true, true )
 
 		-- grinding sound
-		self:SetNetworkedFloat( "GrindSoundTime", CurTime() + 0.2 )
+		self:SetNWFloat( "GrindSoundTime", CurTime() + 0.2 )
 
 	end
 
@@ -584,7 +551,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	self.WaterContacts = 0
 
 	-- we spaz out if we hover when we're physgunned.
-	if ( self:IsPlayerHolding() || self:WaterLevel() > 0 ) then
+	if ( self:IsPlayerHolding() or self:WaterLevel() > 0 ) then
 
 		-- go ahead and update next use
 		self.NextUse = CurTime() + 1
@@ -597,7 +564,6 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local thrusters = #self.ThrusterPoints -- 5 is the magic number (#self.ThrusterPoints)
 	local thruster_mass = phys:GetMass() / thrusters -- spread the mass evenly over all thrusters
 	local hoverheight = math.Clamp( tonumber( self:GetHoverHeight() ), 36, 100 )
-	local massscale = ( phys:GetMass() / 150 )
 
 	-- force accumulators
 	local angular = Vector( 0, 0, 0 )
@@ -716,25 +682,26 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 				-- get angles
 				local ang1 = phys:GetAngles()
-				local ang2 = driver:GetAngles()--:GetAimVector():Angle()
+				local ang2 = driver:GetAngles() --:GetAimVector():Angle()
 				ang2:RotateAroundAxis( Vector( 0, 0, -1 ), self:GetBoardRotation() )
 
 				-- get the difference between the 2 and normalize it
-				local diff = ( math.NormalizeAngle( ang1.y - ang2.y ) )
+				local diff = math.NormalizeAngle( ang1.y - ang2.y )
+
 				-- calculate the delta
 				local delta = ( diff > 0 ) && 1 || -1
 				-- calculate the speed
 				speed = math.Clamp( ( 180 * delta ) - diff, -rotation_speed, rotation_speed )
 
 				-- we are turning.
-				if ( ( diff > 0 && diff < 150 ) || ( diff < 0 && diff > -150 ) ) then driver.IsTurning = true end
+				if ( ( diff > 0 && diff < 150 ) or ( diff < 0 && diff > -150 ) ) then driver.IsTurning = true end
 
 				if ( !driver:KeyDown( IN_FORWARD ) && !driver:KeyDown( IN_FORWARD ) ) then
 
 					-- rotate left
 					if ( driver:KeyDown( IN_MOVELEFT ) ) then
 
-						local forcel, forcea = self:ApplySideForce( phys, ( forward_speed * 0.5 ), thruster_mass )
+						local forcel, forcea = self:ApplySideForce( phys, forward_speed * 0.5, thruster_mass )
 						angular = angular + forcea
 						linear = linear + forcel + friction
 
@@ -753,12 +720,12 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 			else
 
-				if ( driver:KeyDown( IN_MOVELEFT ) ) then -- rotate left
+				if ( driver:KeyDown( IN_MOVELEFT ) ) then
 					speed = rotation_speed
 					driver.IsTurning = true
 				end
 
-				if ( driver:KeyDown( IN_MOVERIGHT ) ) then -- rotate right
+				if ( driver:KeyDown( IN_MOVERIGHT ) ) then
 					speed = -rotation_speed
 					driver.IsTurning = true
 				end
@@ -766,10 +733,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 			end
 
-			-- apply force
+			-- apply turning force
 			local forcelinear, forceangular = phys:CalculateForceOffset(
 				right * speed * thruster_mass,
-				phys:GetPos() + forward * -24 + up * 0 -- it was up * 8 before
+				phys:GetPos() + forward * -24
+				--phys:GetPos() + forward * -24 + up * 8 -- This causes the board to tilt its nose down or up while turning
 			)
 
 			angular = angular + forceangular
@@ -803,7 +771,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		end
 
 		-- grind?
-		if ( driver:KeyDown( IN_DUCK ) || driver:KeyDown( IN_ATTACK2 ) ) then
+		if ( driver:KeyDown( IN_DUCK ) or driver:KeyDown( IN_ATTACK2 ) ) then
 
 			-- grinding destroys all forces
 			angular = Vector( 0, 0, 0 )
@@ -820,7 +788,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		end
 
 		-- aerial control
-		if ( self.Contacts == 0 || self:IsGrinding() ) then
+		if ( self.Contacts == 0 or self:IsGrinding() ) then
 
 			-- rolling
 			if ( driver:KeyDown( IN_ATTACK ) ) then
@@ -895,7 +863,6 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			-- stopped jump
 			self.Jumped = false
 
-			-- jump
 			self:EmitSound( self.JumpSoundFile )
 
 			-- apply a jump force to each thruster
@@ -919,7 +886,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	end
 
 	-- apply friction
-	linear = linear + ( friction * deltatime * ( self:IsGrinding() && 10 || 400 ) * ( ( 1 / thrusters ) * self.Contacts ) )
+	linear = linear + ( friction * deltatime * ( self:IsGrinding() && 10 or 400 ) * ( ( 1 / thrusters ) * self.Contacts ) )
 
 	-- damping
 	angular = angular + angular_damping * deltatime * 750
@@ -932,10 +899,10 @@ end
 hook.Add( "KeyPress", "Hoverboard_KeyPress", function( pl, in_key )
 
 	-- get the scripted vehicle
-	local board = pl:GetNWEntity("ScriptedVehicle")
+	local board = pl:GetNWEntity( "ScriptedVehicle" )
 
 	-- make sure they are using the hoverboard
-	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" ) then return end
 
 	-- check if they are pressing the use key
 	if ( in_key == IN_USE ) then
@@ -943,10 +910,7 @@ hook.Add( "KeyPress", "Hoverboard_KeyPress", function( pl, in_key )
 		-- remove them from board
 		board:SetDriver( NULL )
 
-		-- get physics
 		local phys = board:GetPhysicsObject()
-
-		-- validate
 		if ( IsValid( phys ) ) then
 
 			-- get angle
@@ -959,32 +923,32 @@ hook.Add( "KeyPress", "Hoverboard_KeyPress", function( pl, in_key )
 
 		end
 
-		-- delay next use
+		-- Delay next use
 		board.NextUse = CurTime() + 1
 
 	end
 
-	-- jump
+	-- Jump
 	--if ( in_key == IN_JUMP && board.Contacts >= 3 && board.WaterContacts < 2 ) then
 	if ( in_key == IN_JUMP && board.Contacts >= 2 && board.WaterContacts < 2 ) then board.Jumped = true end
 
-	-- boost
+	-- Boost
 	if ( in_key == IN_SPEED && !board:IsBoosting() && board:Boost() == 100 ) then board:SetBoosting( true ) /* turn on boost */ end
 
 end )
 
 function ENT:Use( activator, caller )
 
-	-- validate the activator and make sure its a player
-	if ( !IsValid( activator ) || !activator:IsPlayer() ) then return /* wtf activated us? */ end
+	-- Has to be a player
+	if ( !IsValid( activator ) or !activator:IsPlayer() ) then return end
 
-	-- make sure we are upright and not under water
-	if ( !self:IsUpright() || self:WaterLevel() > 0 ) then return /* nope! */ end
+	-- Make sure we are upright and not under water
+	if ( !self:IsUpright() or self:WaterLevel() > 0 ) then return end
 
-	self.NextUse = self.NextUse or 0 -- Default next use delay
+	self.NextUse = self.NextUse or 0
 
-	-- make sure its time to be used
-	if ( CurTime() < self.NextUse ) then return /* not time yet */ end
+	-- Make sure its time to be used
+	if ( CurTime() < self.NextUse ) then return end
 
 	self.NextUse = CurTime() + 1 -- Delay the next use
 
@@ -994,9 +958,9 @@ end
 
 function ENT:Mount( pl )
 
-	self:EmitSound( self.MountSoundFile ) -- sound
+	self:EmitSound( self.MountSoundFile )
 
-	local ang = self:GetAngles() -- set player angle
+	local ang = self:GetAngles()
 	ang.r = 0
 	ang:RotateAroundAxis( Vector( 0, 0, 1 ), 180 )
 	ang:RotateAroundAxis( Vector( 0, 0, 1 ), self:GetBoardRotation() )
@@ -1007,7 +971,7 @@ end
 
 function ENT:UnMount( pl )
 
-	self:EmitSound( self.UnMountSoundFile ) -- sound
+	self:EmitSound( self.UnMountSoundFile )
 
 	-- set player angle
 	local ang = self:GetAngles()
