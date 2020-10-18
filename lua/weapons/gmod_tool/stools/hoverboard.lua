@@ -24,6 +24,11 @@ TOOL.ClientConVar[ "turn" ] = 24
 TOOL.ClientConVar[ "flip" ] = 10
 TOOL.ClientConVar[ "twist" ] = 5
 
+TOOL.Information = {
+	{ name = "left" },
+	{ name = "right" }
+}
+
 -- TO ADD NEW HOVERBOARDS, CHECK OUT THE AUTORUN FILE
 
 AddCSLuaFile( "vgui/hoverboard_gui.lua" )
@@ -274,10 +279,13 @@ end
 
 language.Add( "tool.hoverboard.name", "Hoverboards" )
 language.Add( "tool.hoverboard.desc", "Spawn customized hoverboards" )
-language.Add( "tool.hoverboard.0", "Left click to spawn a hoverboard. Right click to spawn a hoverboard & mount onto it." )
+language.Add( "tool.hoverboard.left", "Spawn a hoverboard" )
+language.Add( "tool.hoverboard.right", "Spawn a hoverboard and mount onto it (if within 512 units)" )
 
+language.Add( "tool.hoverboard.trail_size", "Trail Size" )
+language.Add( "tool.hoverboard.view_dist", "View Distance" )
 language.Add( "tool.hoverboard.lights", "Trail lights" )
-language.Add( "tool.hoverboard.lights.help", "The next commands are accessible to the server hoster only ON A LISTEN SERVER ONLY!" )
+language.Add( "tool.hoverboard.lights.help", "The following commands are ONLY accessible to the server host on a LISTEN SERVER!" )
 
 language.Add( "Undone_hoverboard", "Undone Hoverboard" )
 language.Add( "SBoxLimit_hoverboards", "You've reached the Hoverboard limit!" )
@@ -305,14 +313,14 @@ function TOOL.BuildCPanel( cp )
 	cp:AddControl( "Color", { Label = "Boost Color", Red = "hoverboard_boost_r", Green = "hoverboard_boost_g", Blue = "hoverboard_boost_b", ShowAlpha = "0", ShowHSV = "1", ShowRGB = "1" } )
 	cp:AddControl( "Color", { Label = "Recharge Color", Red = "hoverboard_recharge_r", Green = "hoverboard_recharge_g", Blue = "hoverboard_recharge_b", ShowAlpha = "0", ShowHSV = "1", ShowRGB = "1" } )
 
-	cp:AddControl( "Slider", { Label = "Trail Size", Min = 0, Max = 10, Command = "hoverboard_trail_size" } )
-	cp:AddControl( "Slider", { Label = "View Distance", Min = 64, Max = 256, Command = "hoverboard_viewdist" } ):GetParent():DockPadding( 10, 0, 10, 0 )
+	cp:AddControl( "Slider", { Label = "#tool.hoverboard.trail_size", Min = 0, Max = 10, Command = "hoverboard_trail_size" } )
+	cp:AddControl( "Slider", { Label = "#tool.hoverboard.view_dist", Min = 64, Max = 256, Command = "hoverboard_viewdist" } ):GetParent():DockPadding( 10, 0, 10, 0 )
 
 	cp:AddControl( "Checkbox", { Label = "#tool.hoverboard.lights", Command = "hoverboard_lights", Help = true } )
 
-	cp:AddControl( "Checkbox", { Label = "ADMIN: Can Fall From Hoverboard?", Command = "sv_hoverboard_canfall" } )
-	cp:AddControl( "Checkbox", { Label = "ADMIN: Can Share?", Command = "sv_hoverboard_canshare" } )
-	cp:AddControl( "Checkbox", { Label = "ADMIN: Can Steal?", Command = "sv_hoverboard_cansteal" } )
+	cp:AddControl( "Checkbox", { Label = "ADMIN: Can fall from Hoverboard?", Command = "sv_hoverboard_canfall" } )
+	cp:AddControl( "Checkbox", { Label = "ADMIN: Enable Hoverboard sharing", Command = "sv_hoverboard_canshare" } )
+	cp:AddControl( "Checkbox", { Label = "ADMIN: Can steal?", Command = "sv_hoverboard_cansteal" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Admin Only?", Command = "sv_hoverboard_adminonly" } )
 	cp:AddControl( "Slider", { Label = "ADMIN: Max Hoverboards Per Player", Min = 1, Max = 10, Command = "sbox_maxhoverboards" } )
 	--cp:AddControl( "Slider", { Label = "ADMIN: Max Points", Min = 5, Max = 80, Command = "sv_hoverboard_points" } )
