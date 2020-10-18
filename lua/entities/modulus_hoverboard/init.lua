@@ -165,7 +165,7 @@ function ENT:SetDriver( pl )
 				self.Hull = ents.Create( "modulus_hoverboard_hull" )
 				self.Hull:SetAngles( boardphys:GetAngles() )
 
-				local pos = boardphys:GetPos()
+				local pos = boardphys:GetPos() - boardphys:GetAngles():Up() * 4
 				--if ( self:GetModel() == "models/squint_hoverboard/hotrod.mdl" ) then pos = pos + self:GetRight() * 16 end
 				self.Hull:SetPos( pos )
 				self.Hull:Spawn()
