@@ -189,7 +189,7 @@ if ( SERVER ) then
 
 		for k, v in pairs( boardinfo ) do
 
-			if ( k:sub( 1, 7 ):lower() == "effect_" && type( boardinfo[ k ] == "table" ) ) then
+			if ( k:sub( 1, 7 ):lower() == "effect_" && type( boardinfo[ k ] ) == "table" ) then
 
 				local effect = boardinfo[ k ]
 

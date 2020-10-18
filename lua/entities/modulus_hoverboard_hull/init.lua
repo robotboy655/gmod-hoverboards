@@ -75,29 +75,20 @@ end
 
 function ENT:PhysicsCollide( data, phys )
 
-	-- no player?
-	if ( !IsValid( self.Player ) || !IsValid( self:GetOwner() ) || GetConVarNumber( "sv_hoverboard_canfall" ) == 0 ) then return end
-
-	-- the board we belong to
 	local board = self:GetOwner()
+	if ( !IsValid( self.Player ) || !IsValid( board ) || GetConVarNumber( "sv_hoverboard_canfall" ) == 0 ) then return end
 
-	-- is the board upside down?
-	if ( board:GetUp().z < 0.33 ) then board:SetDriver( NULL ) end
+	-- Is the board upside down? If so, boot the player. Timer to avoid the message about crashing in a physics hook
+	if ( board:GetUp().z < 0.33 ) then timer.Simple( 0, function() board:SetDriver( NULL ) end ) end
 
 	if ( data.DeltaTime < 0.2 ) then return end -- timing
 
-	-- get speed
-	local lastvelocity = data.OurOldVelocity
-	local velocity = phys:GetVelocity()
-	local speed = velocity:Length()
-	local lastspeed = lastvelocity:Length()
+	local speed = phys:GetVelocity():Length()
+	local lastspeed = data.OurOldVelocity:Length()
 	local diff = math.abs( lastspeed - speed )
+	if ( diff < 40 ) then return end -- have enough speed?
 
-	if( diff < 40 ) then return end -- have enough speed?
-
-	local damage = math.Clamp( diff * 0.025, 0, 100 ) -- calculate damage
-
-	-- inflict damage to our player
+	local damage = math.Clamp( diff * 0.025, 0, 100 )
 	board:HurtDriver( damage )
 
 	self.Player:EmitSound( "Player.FallDamage" )

@@ -234,6 +234,8 @@ function ENT:Draw()
 
 	self:DrawModel()
 
+	if ( halo.RenderedEntity() == self ) then return end
+
 	for _, effect in pairs( self.Effects ) do effect:Render() end
 
 	if ( GetConVarNumber( "cl_hoverboard_developer" ) == 1 ) then
@@ -338,3 +340,8 @@ hook.Add( "HUDPaint", "Hoverboard_HUDPaint", function()
 	end
 
 end )
+
+hook.Add( "ShouldDrawLocalPlayer", "hoverboards_draw", function()
+	if ( IsValid( LocalPlayer():GetNWEntity( "ScriptedVehicle" ) ) ) then return false end
+end )
+

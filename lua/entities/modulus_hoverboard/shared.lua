@@ -25,13 +25,10 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "String", 1, "ViewDistance" )
 	self:NetworkVar( "String", 2, "EffectCount" )
 
-	self:NetworkVar( "Bool", 0, "DarkInner" )
 
 	self:NetworkVar( "Vector", 0, "TrailColor" )
 	self:NetworkVar( "Vector", 1, "TrailBoostColor" )
 	self:NetworkVar( "Vector", 2, "TrailRechargeColor" )
-
-	self:NetworkVar( "Entity", 0, "ScriptedVehicle" )
 
 end
 
@@ -39,9 +36,6 @@ function ENT:GetDriver()
 	return self:GetOwner()
 end
 
-hook.Add( "ShouldDrawLocalPlayer", "hoverboards_draw", function()
-	if ( IsValid( LocalPlayer():GetNWEntity( "ScriptedVehicle" ) ) ) then return false end
-end )
 
 hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, pos, ang, fov )
 

@@ -183,8 +183,7 @@ function ENT:SetDriver( pl )
 
 		local weapon = pl:GetActiveWeapon()
 		if ( IsValid( weapon ) ) then self.OldWeapon = weapon:GetClass() end
-
-		pl:SelectWeapon( "weapon_crowbar" ) -- switch weapon
+		--pl:SelectWeapon( "weapon_crowbar" ) -- Handled in think
 
 		 -- don't allow us to mount if we already have a scripted vehicle
 		if ( IsValid( pl:GetNWEntity( "ScriptedVehicle" ) ) ) then return end
@@ -211,11 +210,7 @@ function ENT:SetDriver( pl )
 
 		end
 
-		self.PhysgunDisabled = true -- disable physgun
-
-		pl:DrawWorldModel( false )
-		pl:DrawViewModel( false )
-		pl:SetNoDraw( true )
+		self.PhysgunDisabled = true
 
 	else
 
@@ -320,9 +315,13 @@ function ENT:Think()
 	local driver = self:GetDriver()
 	if ( IsValid( driver ) ) then
 
+		driver:DrawViewModel( false )
 		driver:DrawWorldModel( false )
 		driver:SetNoDraw( true )
 
+		-- Make sure their active weapon is NULL
+		-- So there's no weird things like toolgun ghost or something
+		driver:SetActiveWeapon( NULL )
 
 		-- make sure driver is still around
 		if ( self:WaterLevel() > 0 or !driver:Alive() or !driver:IsConnected() ) then
@@ -657,7 +656,6 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		local forward = phys:GetAngles():Forward()
 		local right = phys:GetAngles():Right()
-		local up = phys:GetAngles():Up()
 		forward.z = 0
 		right.z = 0
 
@@ -696,7 +694,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 				-- we are turning.
 				if ( ( diff > 0 && diff < 150 ) or ( diff < 0 && diff > -150 ) ) then driver.IsTurning = true end
 
-				if ( !driver:KeyDown( IN_FORWARD ) && !driver:KeyDown( IN_FORWARD ) ) then
+				if ( !driver:KeyDown( IN_FORWARD ) && !driver:KeyDown( IN_BACK ) ) then
 
 					-- rotate left
 					if ( driver:KeyDown( IN_MOVELEFT ) ) then
