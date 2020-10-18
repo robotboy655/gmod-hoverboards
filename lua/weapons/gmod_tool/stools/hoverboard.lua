@@ -2,12 +2,12 @@
 TOOL.Category = "Robotboy655"
 TOOL.Name = "#tool.hoverboard.name"
 
-TOOL.ClientConVar[ "model" ] = "models/ut3/hoverboard.mdl"
-TOOL.ClientConVar[ "lights" ] = 0
+TOOL.ClientConVar[ "model" ] = "models/dav0r/hoverboard/hoverboard.mdl"
+TOOL.ClientConVar[ "lights" ] = 1
 TOOL.ClientConVar[ "mousecontrol" ] = 1
 TOOL.ClientConVar[ "boostshake" ] = 1
 TOOL.ClientConVar[ "height" ] = 72
-TOOL.ClientConVar[ "viewdist" ] = 128
+TOOL.ClientConVar[ "viewdist" ] = 172
 TOOL.ClientConVar[ "trail_size" ] = 5
 TOOL.ClientConVar[ "trail_r" ] = 128
 TOOL.ClientConVar[ "trail_g" ] = 128
@@ -19,8 +19,8 @@ TOOL.ClientConVar[ "recharge_r" ] = 255
 TOOL.ClientConVar[ "recharge_g" ] = 128
 TOOL.ClientConVar[ "recharge_b" ] = 128
 TOOL.ClientConVar[ "speed" ] = 10
-TOOL.ClientConVar[ "jump" ] = 10
-TOOL.ClientConVar[ "turn" ] = 10
+TOOL.ClientConVar[ "jump" ] = 4
+TOOL.ClientConVar[ "turn" ] = 24
 TOOL.ClientConVar[ "flip" ] = 10
 TOOL.ClientConVar[ "twist" ] = 5
 
@@ -284,7 +284,11 @@ language.Add( "SBoxLimit_hoverboards", "You've reached the Hoverboard limit!" )
 
 local hbpanel = vgui.RegisterFile( "vgui/hoverboard_gui.lua" )
 
+local ConVarsDefault = TOOL:BuildConVarList()
+
 function TOOL.BuildCPanel( cp )
+
+	cp:AddControl( "ComboBox", { MenuButton = 1, Folder = "hoverboard", Options = { [ "#preset.default" ] = ConVarsDefault }, CVars = table.GetKeys( ConVarsDefault ) } )
 
 	--cp:AddControl( "PropSelect", { Label = "Hoverboard Model", Height = 3, ConVar = "hoverboard_model", Models = list.Get( "HoverboardModels" ) } )
 
