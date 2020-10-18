@@ -30,8 +30,12 @@ function ENT:Initialize()
 	self:SetModel( "models/modulus/player_hull.mdl" )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
-	self:SetNoDraw( true )
 	self:DrawShadow( false )
+	self:SetNoDraw( true )
+
+	-- For debugging
+	self:SetColor( Color( 0, 0, 0, 128 ) )
+	self:SetRenderMode( RENDERMODE_TRANSCOLOR )
 
 	self.Player = NULL
 
@@ -45,16 +49,11 @@ end
 
 function ENT:Think()
 
-	-- get physics
-	local phys = self:GetPhysicsObject()
+	if ( GetConVarNumber( "sv_hoverboard_canfall" ) == 1 ) then
 
-	-- validate
-	if ( IsValid( phys ) && GetConVarNumber( "sv_hoverboard_canfall" ) == 1 ) then
+		local phys = self:GetPhysicsObject()
+		if ( IsValid( phys ) && phys:IsPenetrating() ) then
 
-		-- check
-		if ( phys:IsPenetrating() ) then
-
-			-- the board we belong to
 			local board = self:GetOwner()
 
 			board:SetDriver( NULL )

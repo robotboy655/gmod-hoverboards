@@ -45,7 +45,7 @@ function ENT:Initialize()
 
 	self.WaterContacts = 0
 	self.Contacts = 0
-	self.MouseControl = 1
+	self.MouseControl = true
 	self.CanPitch = false
 	self:SetBoost( 100 )
 	self.NextBoostThink = 0
@@ -101,9 +101,9 @@ function ENT:OnRemove()
 
 end
 
-function ENT:SetControls( num )
+function ENT:SetControls( bMouse )
 
-	self.MouseControl = num
+	self.MouseControl = tobool( bMouse )
 
 end
 
@@ -122,7 +122,8 @@ function ENT:SetDriver( pl )
 
 			self:UnMount( driver ) -- unmount
 
-			driver:SetMoveType( driver.OldMoveType ) -- restore movetype
+			--driver:SetMoveType( driver.OldMoveType ) -- restore movetype
+			driver:SetMoveType( MOVETYPE_WALK ) -- restore movetype
 			driver:DrawWorldModel( true )
 			driver:DrawViewModel( true )
 			driver:SetNoDraw( false )
@@ -192,7 +193,7 @@ function ENT:SetDriver( pl )
 		pl:SetNWEntity( "ScriptedVehicle", self )
 
 		-- store our old movetype and prevent us from moving
-		pl.OldMoveType = pl:GetMoveType()
+		--pl.OldMoveType = pl:GetMoveType()
 		pl:SetMoveType( MOVETYPE_NOCLIP )
 
 		self:Mount( pl )
@@ -676,7 +677,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			local speed = 0
 
 			-- they use the mouse to control the board, figure out rotation force
-			if ( self.MouseControl == 1 ) then
+			if ( self.MouseControl ) then
 
 				-- get angles
 				local ang1 = phys:GetAngles()
@@ -867,10 +868,9 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			for i = 1, thrusters do
 
 				local point = self:GetThruster( i )
-				local speed = velocity:Length()
 
 				-- shift the jump point based on speed
-				point = point + ( forward * ( speed * 0.01 ) )
+				point = point + ( forward * ( velocity:Length() * 0.01 ) )
 
 				-- apply force
 				local forcelinear, forceangular = phys:CalculateForceOffset( Vector( 0, 0, jump_power ) * thruster_mass, point )
@@ -1029,42 +1029,35 @@ function ENT:UnMount( pl )
 				//break
 			end
 		end
-	end*/
+	end
+
+	pl:SetPos( self:GetPos() - self:GetForward() * 64 )*/
 
 	pl:SetPos( pos )
-	--pl:SetPos( self:GetPos() - self:GetForward() * 64 )
 	pl:SetMoveType( MOVETYPE_WALK )
 
 end
 
 hook.Add( "EntityTakeDamage", "Hoverboard_EntityTakeDamage", function( ent, dmginfo )
 
-	local attacker = dmginfo:GetAttacker() -- get attacker
+	local attacker = dmginfo:GetAttacker()
+	if ( !IsValid( attacker ) ) then return end
 
-	-- make sure its a hoverboard
-	if ( IsValid( attacker ) ) then
+	local driver
 
-		local driver
+	if ( attacker:GetClass() == "modulus_hoverboard" ) then
 
-		if ( attacker:GetClass() == "modulus_hoverboard" ) then
+		driver = attacker:GetDriver()
 
-			-- get driver
-			driver = attacker:GetDriver()
+	elseif ( attacker:GetClass() == "modulus_hoverboard_hull" ) then
 
-		elseif ( attacker:GetClass() == "modulus_hoverboard_hull" ) then
+		driver = attacker:GetOwner():GetDriver()
 
-			-- get driver
-			driver = attacker:GetOwner():GetDriver()
+	end
 
-		end
+	if ( IsValid( driver ) ) then
 
-		-- validate
-		if ( IsValid( driver ) ) then
-
-			-- change attacker
-			dmginfo:SetAttacker( driver )
-
-		end
+		dmginfo:SetAttacker( driver )
 
 	end
 
@@ -1072,16 +1065,14 @@ end )
 
 function ENT:AddEffect( effect, pos, normal, scale )
 
-	-- increment effect count
-	local index = tonumber( self:GetEffectCount() ) or 0
-	index = index + 1
-
+	-- Increment effect count
+	local index = self:GetEffectCount() + 1
 	self:SetEffectCount( index )
 
-	-- add new effect
-	self:SetNetworkedString( "Effect" .. index, effect )
-	self:SetNetworkedVector( "EffectPos" .. index, pos || Vector( 0, 0, 0 ) )
-	self:SetNetworkedVector( "EffectNormal" .. index, normal || Vector( 0, 0, 1 ) )
-	self:SetNetworkedFloat( "EffectScale" .. index, scale || 1 )
+	-- Add new effect
+	self:SetNWString( "Effect" .. index, effect )
+	self:SetNWVector( "EffectPos" .. index, pos or Vector( 0, 0, 0 ) )
+	self:SetNWVector( "EffectNormal" .. index, normal or Vector( 0, 0, 1 ) )
+	self:SetNWFloat( "EffectScale" .. index, scale or 1 )
 
 end

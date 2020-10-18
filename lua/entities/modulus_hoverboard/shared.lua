@@ -15,16 +15,16 @@ ENT.ThrusterPoints = {
 
 function ENT:SetupDataTables()
 
-	self:NetworkVar( "Float", 0, "BoostShake" )
-	self:NetworkVar( "Float", 1, "BoardVelocity" )
-	self:NetworkVar( "Float", 2, "MaxLength" )
-	self:NetworkVar( "Float", 3, "TrailScale" )
-	self:NetworkVar( "Float", 4, "BoardRotation" )
+	self:NetworkVar( "Float", 0, "BoardVelocity" )
+	self:NetworkVar( "Float", 1, "MaxLength" )
+	self:NetworkVar( "Float", 2, "TrailScale" )
+	self:NetworkVar( "Float", 3, "BoardRotation" )
+	self:NetworkVar( "Float", 4, "HoverHeight" )
+	self:NetworkVar( "Float", 5, "ViewDistance" )
 
-	self:NetworkVar( "String", 0, "HoverHeight" ) -- Stupid limits!
-	self:NetworkVar( "String", 1, "ViewDistance" )
-	self:NetworkVar( "String", 2, "EffectCount" )
+	self:NetworkVar( "Int", 0, "EffectCount" )
 
+	self:NetworkVar( "Bool", 0, "BoostShake" )
 
 	self:NetworkVar( "Vector", 0, "TrailColor" )
 	self:NetworkVar( "Vector", 1, "TrailBoostColor" )
