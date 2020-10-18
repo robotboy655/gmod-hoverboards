@@ -852,19 +852,12 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		-- jump is handled via keypress since it was unresponsive here.
 		if ( self.Jumped ) then
 
-			-- current speed
-			local speed = velocity:Length()
-
-			-- fractional speed
-			speed = speed / 575
-
-			-- calculate speed sound
-			jump_power = math.Clamp( jump_power * speed, 170, 300 ) / 5
-
-			-- stopped jump
 			self.Jumped = false
 
 			self:EmitSound( self.JumpSoundFile )
+
+			-- Jump force
+			local jump_force = ( 170 + math.Clamp( jump_power, 0, 300 ) ) * 0.2
 
 			-- apply a jump force to each thruster
 			for i = 1, thrusters do
@@ -875,7 +868,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 				point = point + ( forward * ( velocity:Length() * 0.01 ) )
 
 				-- apply force
-				local forcelinear, forceangular = phys:CalculateForceOffset( Vector( 0, 0, jump_power ) * thruster_mass, point )
+				local forcelinear, forceangular = phys:CalculateForceOffset( Vector( 0, 0, jump_force ) * thruster_mass, point )
 				angular = angular + forceangular + angular_damping
 				linear = linear + forcelinear + friction
 
