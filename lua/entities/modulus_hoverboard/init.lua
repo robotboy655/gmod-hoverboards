@@ -778,7 +778,6 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			angular = Vector( 0, 0, 0 )
 			linear = Vector( 0, 0, 0 )
 
-			-- update grinding
 			if ( !self:IsGrinding() ) then self:SetGrinding( true ) end
 
 		else
@@ -931,7 +930,7 @@ hook.Add( "KeyPress", "Hoverboard_KeyPress", function( pl, in_key )
 
 	-- Jump
 	--if ( in_key == IN_JUMP && board.Contacts >= 3 && board.WaterContacts < 2 ) then
-	if ( in_key == IN_JUMP && board.Contacts >= 2 && board.WaterContacts < 2 ) then board.Jumped = true end
+	if ( in_key == IN_JUMP && board.Contacts >= 2 && ( board.WaterContacts < 2 or GetConVarNumber( "sv_hoverboard_water_jump" ) != 0 ) ) then board.Jumped = true end
 
 	-- Boost
 	if ( in_key == IN_SPEED && !board:IsBoosting() && board:Boost() == 100 ) then board:SetBoosting( true ) /* turn on boost */ end

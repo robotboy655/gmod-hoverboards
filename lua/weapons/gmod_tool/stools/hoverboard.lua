@@ -319,6 +319,7 @@ function TOOL.BuildCPanel( cp )
 	cp:AddControl( "Checkbox", { Label = "#tool.hoverboard.lights", Command = "hoverboard_lights", Help = true } )
 
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can fall from Hoverboard?", Command = "sv_hoverboard_canfall" } )
+	cp:AddControl( "Checkbox", { Label = "ADMIN: Can jump on water", Command = "sv_hoverboard_water_jump" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Enable Hoverboard sharing", Command = "sv_hoverboard_canshare" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can steal?", Command = "sv_hoverboard_cansteal" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Admin Only?", Command = "sv_hoverboard_adminonly" } )
