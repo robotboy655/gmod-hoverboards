@@ -34,7 +34,6 @@ function ENT:SetPlayer( pl )
 
 		for i = 0, pl:GetNumBodyGroups() - 1 do self:SetBodygroup( i, pl:GetBodygroup( i ) ) end
 
-		-- Player color
 	end
 
 	self:SetMoveType( MOVETYPE_NONE )

@@ -17,21 +17,15 @@ AccessorFunc( ENT, "boosterspeed", "BoostMultiplier", FORCE_NUMBER )
 AccessorFunc( ENT, "dampingfactor", "DampingFactor", FORCE_NUMBER )
 AccessorFunc( ENT, "spring", "Spring", FORCE_NUMBER )
 
-function ENT:Precache()
+ENT.MountSoundFile = "buttons/button9.wav"
+ENT.UnMountSoundFile = "buttons/button19.wav"
+ENT.JumpSoundFile = "weapons/airboat/airboat_gun_energy1.wav"
 
-	self.MountSoundFile = "buttons/button9.wav"
-	self.UnMountSoundFile = "buttons/button19.wav"
-	self.JumpSoundFile = "weapons/airboat/airboat_gun_energy1.wav"
+function ENT:Precache()
 
 	util.PrecacheSound( self.MountSoundFile )
 	util.PrecacheSound( self.UnMountSoundFile )
 	util.PrecacheSound( self.JumpSoundFile )
-
-end
-
-function ENT:UpdateTransmitState()
-
-	return TRANSMIT_ALWAYS
 
 end
 
@@ -66,7 +60,6 @@ function ENT:Initialize()
 	self.PhysgunDisabled = false
 
 	self:CreateAvatar()
-
 	self.Hull = NULL
 
 	local boardphys = self:GetPhysicsObject()
@@ -107,6 +100,12 @@ function ENT:SetControls( bMouse )
 
 end
 
+function ENT:UpdateTransmitState()
+
+	return TRANSMIT_ALWAYS
+
+end
+
 function ENT:SetDriver( pl )
 
 	if ( !IsValid( self.Avatar ) ) then self:CreateAvatar() end
@@ -136,6 +135,7 @@ function ENT:SetDriver( pl )
 			if ( self.OldWeapon && driver:HasWeapon( self.OldWeapon ) ) then
 				driver:SelectWeapon( self.OldWeapon )
 			end
+
 		else
 
 			return
@@ -184,7 +184,6 @@ function ENT:SetDriver( pl )
 
 		local weapon = pl:GetActiveWeapon()
 		if ( IsValid( weapon ) ) then self.OldWeapon = weapon:GetClass() end
-		--pl:SelectWeapon( "weapon_crowbar" ) -- Handled in think
 
 		 -- don't allow us to mount if we already have a scripted vehicle
 		if ( IsValid( pl:GetNWEntity( "ScriptedVehicle" ) ) ) then return end
@@ -220,7 +219,6 @@ function ENT:SetDriver( pl )
 	end
 
 	-- set new driver
-	self:SetNWEntity( "Driver", pl )
 	self:SetOwner( pl )
 
 end
@@ -329,14 +327,6 @@ function ENT:Think()
 
 			-- give 'em the boot
 			self:SetDriver( NULL )
-
-		-- make sure board is upright
-		/*elseif ( self:GetUp().z < -0.85 ) then
-			-- check if board is on ground
-			if ( self.Contacts > 0 or self:OnGround() ) then
-				-- give 'em the boot
-				--self:SetDriver( NULL )
-			end*/
 
 		else
 
@@ -657,6 +647,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		local forward = phys:GetAngles():Forward()
 		local right = phys:GetAngles():Right()
+		--local up = phys:GetAngles():Up()
 		forward.z = 0
 		right.z = 0
 
@@ -730,7 +721,6 @@ function ENT:PhysicsSimulate( phys, deltatime )
 					speed = -rotation_speed
 					driver.IsTurning = true
 				end
-
 
 			end
 
