@@ -9,6 +9,7 @@ if ( SERVER ) then
 	CreateConVar( "sv_hoverboard_canshare", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_canfall", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	CreateConVar( "sv_hoverboard_water_jump", 0, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
+	CreateConVar( "sv_hoverboard_allow_damage", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	--CreateConVar( "sv_hoverboard_points", "45", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 
 	/*util.AddNetworkString("rb655_hoverpoints")

@@ -298,8 +298,6 @@ function TOOL.BuildCPanel( cp )
 
 	cp:AddControl( "ComboBox", { MenuButton = 1, Folder = "hoverboard", Options = { [ "#preset.default" ] = ConVarsDefault }, CVars = table.GetKeys( ConVarsDefault ) } )
 
-	--cp:AddControl( "PropSelect", { Label = "Hoverboard Model", Height = 3, ConVar = "hoverboard_model", Models = list.Get( "HoverboardModels" ) } )
-
 	local panel = vgui.CreateFromTable( hbpanel )
 	panel:PopulateBoards( HoverboardTypes )
 	panel:PerformLayout( )
@@ -320,6 +318,7 @@ function TOOL.BuildCPanel( cp )
 
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can fall from Hoverboard?", Command = "sv_hoverboard_canfall" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can jump on water", Command = "sv_hoverboard_water_jump" } )
+	cp:AddControl( "Checkbox", { Label = "ADMIN: Hoverboards can deal damage", Command = "sv_hoverboard_allow_damage" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Enable Hoverboard sharing", Command = "sv_hoverboard_canshare" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Can steal?", Command = "sv_hoverboard_cansteal" } )
 	cp:AddControl( "Checkbox", { Label = "ADMIN: Admin Only?", Command = "sv_hoverboard_adminonly" } )

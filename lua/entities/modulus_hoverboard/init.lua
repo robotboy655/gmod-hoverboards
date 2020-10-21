@@ -1046,10 +1046,18 @@ end
 
 hook.Add( "EntityTakeDamage", "Hoverboard_EntityTakeDamage", function( ent, dmginfo )
 
+	local inflictor = dmginfo:GetInflictor()
+	if ( IsValid( inflictor ) && GetConVarNumber( "sv_hoverboard_allow_damage" ) == 0
+		&& ( inflictor:GetClass() == "modulus_hoverboard" or inflictor:GetClass() == "modulus_hoverboard_hull" ) ) then
+
+		dmginfo:SetDamage( 0 )
+
+	end
+
 	local attacker = dmginfo:GetAttacker()
 	if ( !IsValid( attacker ) ) then return end
 
-	local driver
+	local driver = NULL
 
 	if ( attacker:GetClass() == "modulus_hoverboard" ) then
 
