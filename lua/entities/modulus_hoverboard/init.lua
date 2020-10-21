@@ -869,8 +869,12 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	end
 
+	-- Fixes hoverboard speeding up unexpectedly when on 2 thrusters
+	local fric_contacts = 0
+	if ( self.Contacts > 0 ) then fric_contacts = thrusters end
+
 	-- Apply friction
-	linear = linear + ( friction * deltatime * ( self:IsGrinding() && 10 or 400 ) * ( ( 1 / thrusters ) * self.Contacts ) )
+	linear = linear + ( friction * deltatime * ( self:IsGrinding() && 10 or 400 ) * ( ( 1 / thrusters ) * fric_contacts ) )
 
 	-- Damping
 	angular = angular + angular_damping * deltatime * 750
