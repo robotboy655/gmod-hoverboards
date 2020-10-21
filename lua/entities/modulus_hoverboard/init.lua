@@ -731,6 +731,9 @@ function ENT:PhysicsSimulate( phys, deltatime )
 				--phys:GetPos() + forward * -24 + up * 8 -- This causes the board to tilt its nose down or up while turning
 			)
 
+			-- No pitch or roll when turning please
+			forceangular.r = 0
+			forceangular.p = 0
 			angular = angular + forceangular
 
 		else
