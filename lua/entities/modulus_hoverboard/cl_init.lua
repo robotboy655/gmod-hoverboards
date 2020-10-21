@@ -345,6 +345,7 @@ hook.Add( "ShouldDrawLocalPlayer", "hoverboards_draw", function()
 end )
 
 local ClientsideViewDistance = 0
+local camMins, camMaxs = Vector( -4, -4, -4 ), Vector( 4, 4, 4 )
 hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fov )
 
 	local ent = pl:GetNWEntity( "ScriptedVehicle" )
@@ -361,8 +362,18 @@ hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fo
 	ClientsideViewDistance = math.Approach( ClientsideViewDistance, ent:GetViewDistance(), change )
 
 	-- Camera position
+	local tr_up = util.TraceHull( {
+		start = ent:GetPos(),
+		endpos = ent:GetPos() + Vector( 0, 0, 64 ),
+		filter = { ent, pl },
+		mask = MASK_NPCWORLDSTATIC,
+		mins = camMins,
+		maxs = camMaxs
+	} )
+
 	local dir = ang:Forward()
-	local pos = ent:GetPos() + Vector( 0, 0, 54 ) - ( dir * ClientsideViewDistance )
+	local origin = tr_up.HitPos
+	local pos = origin - ( dir * ClientsideViewDistance )
 
 	-- Shake their view
 	local speed = ent:GetVelocity():Length() - 500
@@ -380,13 +391,25 @@ hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fo
 
 	-- Keep the camera outside of walls
 	local tr = util.TraceHull( {
-		start = ent:GetPos() + Vector( 0, 0, 64 ),
+		start = origin,
 		endpos = pos,
-		filter = { ent, pl, ent:GetNWEntity( "Avatar", NULL ) },
+		filter = { ent, pl },
 		mask = MASK_NPCWORLDSTATIC,
-		mins = Vector( -4, -4, -4 ),
-		maxs = Vector( 4, 4, 4 )
+		mins = camMins,
+		maxs = camMaxs
 	} )
+
+	-- We are too close to the camera from this point of view, try tracing from the board
+	if ( tr.Fraction < 0.01 ) then
+		tr = util.TraceHull( {
+			start = ent:GetPos(),
+			endpos = pos,
+			filter = { ent, pl },
+			mask = MASK_NPCWORLDSTATIC,
+			mins = camMins,
+			maxs = camMaxs
+		} )
+	end
 
 	return {
 		origin = tr.HitPos,
