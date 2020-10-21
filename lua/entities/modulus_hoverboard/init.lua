@@ -939,8 +939,14 @@ function ENT:Use( activator, caller )
 	-- Has to be a player
 	if ( !IsValid( activator ) or !activator:IsPlayer() ) then return end
 
-	-- Make sure we are upright and not under water
-	if ( !self:IsUpright() or self:WaterLevel() > 0 ) then return end
+	-- We are upside down, try to flip
+	if ( !self:IsUpright() ) then
+		if ( IsValid( self:GetPhysicsObject() ) ) then self:GetPhysicsObject():AddAngleVelocity( Vector( 0, 4800, 0 ) ) end
+		return
+	end
+
+	-- Make sure we are not under water
+	if ( self:WaterLevel() > 0 ) then return end
 
 	self.NextUse = self.NextUse or 0
 
