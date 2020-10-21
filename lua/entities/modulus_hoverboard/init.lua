@@ -973,6 +973,33 @@ function ENT:Mount( pl )
 
 end
 
+local function IsPlayerSpotGood( pl, pos )
+
+	-- Can we stand in this spot?
+	local mins, maxs = pl:GetHull()
+	local tr = util.TraceHull( {
+		start = pos, endpos = pos,
+		mins = mins, maxs = maxs,
+		filter = pl
+	} )
+	if ( !tr.Hit ) then return true end
+
+	-- Can we crouch in this spot?
+	local minsD, maxsD = pl:GetHullDuck()
+	local trD = util.TraceHull( {
+		start = pos, endpos = pos,
+		mins = minsD, maxs = maxsD,
+		filter = pl
+	} )
+	if ( !trD.Hit ) then
+		pl:AddFlags( FL_DUCKING )
+		return true
+	end
+
+	return false
+
+end
+
 function ENT:UnMount( pl )
 
 	self:EmitSound( self.UnMountSoundFile )
@@ -985,64 +1012,39 @@ function ENT:UnMount( pl )
 	pl:SetAngles( ang )
 	pl:SetEyeAngles( ang )
 
+	-- We already good
+	if ( IsPlayerSpotGood( pl, pl:GetPos() ) ) then return end
+
 	-- Try to figure out a good position for the player
-	local pos = self:GetPos() + self:GetUp() * 8
+	local pos = self:GetPos()
+	if ( IsPlayerSpotGood( pl, pos ) ) then pl:SetPos( pos ) return end
 
-	/*local newpos = Vector(0,0,0)
+	pos = self:GetPos() + self:GetUp() * 8
+	if ( IsPlayerSpotGood( pl, pos ) ) then pl:SetPos( pos ) return end
 
-	local tr = util.TraceHull( {
-		start = pos,
-		endpos = pos,
-		mins = pl:OBBMins(),
-		maxs = pl:OBBMaxs(),
-		filter = {
-			self, pl, self.Hull, self.Avatar
-		}
-	} )
+	-- Try to place the player in every direction from the board
+	pos = self:GetPos()
+	local mins, maxs = pl:GetHullDuck() -- Assume worst case
+	for id, vec in pairs( { self:GetForward(), -self:GetForward(), self:GetRight(), -self:GetRight(), self:GetUp(), -self:GetUp(), Vector( 1, 0, 0 ), Vector( -1, 0, 0 ), Vector( 0, 1, 0 ), Vector( 0, -1, 0 ), Vector( 0, 0, 1 ), Vector( 0, 0, -1 ) } ) do
 
-	if ( tr.Hit ) then
-		ChatPrint( tr.Entity )
-		//Entity(2):Kill()
+		local tr = util.TraceHull( {
+			start = pos,
+			endpos = pos + vec * 100,
+			mins = mins,
+			maxs = maxs,
+			filter = {
+				self, pl, self.Hull, self.Avatar
+			}
+		} )
 
-		for id, vec in pairs( { Vector( 1, 0, 0 ), Vector( -1, 0, 0 ), Vector( 0, 1, 0 ), Vector( 0, -1, 0 ), Vector( 0, 0, 1 ), Vector( 0, 0, -1 ) } ) do
-
-			local tr2 = util.TraceHull( {
-				start = pos,
-				endpos = pos + vec * 200,
-				mins = pl:OBBMins(),
-				maxs = pl:OBBMaxs(),
-				filter = {
-					self, pl, self.Hull, self.Avatar
-				}
-			} )
-
-			local tr3 = util.TraceHull( {
-				start = pos - vec * 200,
-				endpos = tr2.HitPos,
-				mins = pl:OBBMins(),
-				maxs = pl:OBBMaxs()
-			} )
-
-			local tr4 = util.TraceHull( {
-				start = tr3.HitPos - vec,
-				endpos = tr3.HitPos - vec,
-				mins = pl:OBBMins(),
-				maxs = pl:OBBMaxs()
-			} )
-
-			if ( !tr4.Hit ) then
-				pos = tr4.HitPos
-				ChatPrint( "STOOPED" )
-				newpos = newpos + Vector( tr4.HitPos.x * math.abs(vec.x),tr4.HitPos.y * math.abs(vec.y),tr4.HitPos.z * math.abs(vec.z) )
-				//break
-			end
+		if ( IsPlayerSpotGood( pl, tr.HitPos ) ) then
+			return pl:SetPos( tr.HitPos )
 		end
 	end
 
-	pl:SetPos( self:GetPos() - self:GetForward() * 64 )*/
-
-	pl:SetPos( pos )
-	pl:SetMoveType( MOVETYPE_WALK )
+	-- print( "FOUND NO POS" )
+	-- TODO: Kill?
+	-- ply:TakeDamage( ply:Health() )
 
 end
 
