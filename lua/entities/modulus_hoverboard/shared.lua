@@ -88,6 +88,17 @@ hook.Add( "Move", "Hoverboard_Move", function( pl, mv )
 
 end )
 
+hook.Add( "PlayerNoClip", "Hoverboard_DisallowOnboardNoclip", function( ply, desiredState )
+
+	local board = ply:GetNWEntity( "ScriptedVehicle" )
+	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+
+	-- Do not allow to disable noclip on the board
+	-- Other mods will probably mess this up, but its no big deal
+	return false
+
+end )
+
 hook.Add( "UpdateAnimation", "Hoverboard_UpdateAnimation", function( pl )
 
 	local board = pl:GetNWEntity( "ScriptedVehicle" ) -- get the scripted vehicle
