@@ -324,7 +324,6 @@ hook.Add( "HUDPaint", "Hoverboard_HUDPaint", function()
 		-- check for board
 		if ( IsValid( tr.Entity ) && tr.Entity:GetClass() == "modulus_hoverboard" ) then
 
-
 			local pos = tr.Entity:WorldToLocal( tr.HitPos ) -- get coordinates
 			local text = ("Coords: %s"):format( tostring( pos ) ) -- build string
 
@@ -392,7 +391,7 @@ hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fo
 	return {
 		origin = tr.HitPos,
 		angles = dir:Angle(),
-		fov = fov,
+		fov = fov
 	}
 
 end )

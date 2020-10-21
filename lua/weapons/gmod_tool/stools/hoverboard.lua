@@ -55,7 +55,6 @@ for _, hbt in pairs( HoverboardTypes ) do
 
 end
 
-
 function TOOL:LeftClick( trace )
 
 	local result, hoverboard = self:CreateBoard( trace )

@@ -61,7 +61,7 @@ function ENT:Think()
 
 	end
 
-	self:NextThink( CurTime() + 0.1 )
+	self:NextThink( CurTime() )
 	return true
 
 end

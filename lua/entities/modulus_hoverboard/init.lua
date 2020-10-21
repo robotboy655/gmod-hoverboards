@@ -254,7 +254,7 @@ function ENT:IsUpright( physobj )
 
 	local up = phys:GetAngles():Up()
 
-	return ( up.z >= 0.33 )
+	return up.z >= 0.33
 
 end
 
@@ -586,8 +586,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			start = point,
 			endpos = point - Vector( 0, 0, tracelen ),
 			filter = { self, driver, self.Hull },
-			mask = bit.bor( MASK_SOLID , MASK_WATER ),
-
+			mask = bit.bor( MASK_SOLID , MASK_WATER )
 		} )
 
 		-- did we hit water?
@@ -672,7 +671,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 				-- get angles
 				local ang1 = phys:GetAngles()
-				local ang2 = driver:GetAngles() --:GetAimVector():Angle()
+				local ang2 = driver:GetAimVector():Angle()
 				ang2:RotateAroundAxis( Vector( 0, 0, -1 ), self:GetBoardRotation() )
 
 				-- get the difference between the 2 and normalize it
