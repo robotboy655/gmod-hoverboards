@@ -117,20 +117,20 @@ function ENT:SetDriver( pl )
 
 		if ( !IsValid( pl ) or GetConVarNumber( "sv_hoverboard_cansteal" ) == 1 ) then -- check if we should boot the driver
 
-			driver:SetNWEntity( "ScriptedVehicle", NULL ) -- clear it's scripted vehicle
+			driver:SetNWEntity( "ScriptedVehicle", NULL )
 
 			self:UnMount( driver ) -- unmount
 
 			--driver:SetMoveType( driver.OldMoveType ) -- restore movetype
-			driver:SetMoveType( MOVETYPE_WALK ) -- restore movetype
+			driver:SetMoveType( MOVETYPE_WALK )
 			driver:DrawWorldModel( true )
 			driver:DrawViewModel( true )
 			driver:SetNoDraw( false )
 
-			self.PhysgunDisabled = false -- enable physgun again
+			self.PhysgunDisabled = false
 
-			self:SetGrinding( false ) -- grinding off
-			self:SetBoosting( false ) -- boost off
+			self:SetGrinding( false )
+			self:SetBoosting( false )
 
 			if ( self.OldWeapon && driver:HasWeapon( self.OldWeapon ) ) then
 				driver:SelectWeapon( self.OldWeapon )

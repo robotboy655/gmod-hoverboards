@@ -27,7 +27,6 @@ function ENT:SetPlayer( pl )
 	if ( IsValid( pl ) && pl:IsPlayer() ) then
 
 		self.Model = pl:GetModel()
-		util.PrecacheModel( self.Model )
 		self:SetModel( self.Model )
 		self:SetSkin( pl:GetSkin() )
 		self.GetPlayerColor = function() return pl:GetPlayerColor() end

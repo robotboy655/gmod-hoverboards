@@ -32,6 +32,7 @@ function ENT:Initialize()
 	self:SetRenderMode( RENDERMODE_TRANSCOLOR )
 
 	self.Player = NULL
+	self.PhysgunDisabled = true
 
 end
 
