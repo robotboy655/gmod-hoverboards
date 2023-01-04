@@ -50,13 +50,18 @@ function ENT:Think()
 		if ( IsValid( phys ) && phys:IsPenetrating() ) then
 
 			local board = self:GetOwner()
+			if ( IsValid( board ) ) then
+				board:SetDriver( NULL )
 
-			board:SetDriver( NULL )
+				if ( IsValid( self.Player ) ) then
+					local damage = self.Player:Health() * 0.9
+					board:HurtDriver( damage )
+				end
+			end
 
-			local damage = self.Player:Health() * 0.9
-			board:HurtDriver( damage )
-
-			self.Player:EmitSound( "Player.FallDamage" )
+			if ( IsValid( self.Player ) ) then
+				self.Player:EmitSound( "Player.FallDamage" )
+			end
 
 		end
 
