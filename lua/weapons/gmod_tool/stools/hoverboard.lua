@@ -203,6 +203,7 @@ if ( SERVER ) then
 
 		end
 
+		local height = math.Clamp( height, 10, 200 )
 		hoverboard:SetControls( tonumber( mcontrol ) != 0 )
 		hoverboard:SetBoostShake( tonumber( shake ) != 0 )
 		hoverboard:SetHoverHeight( math.Clamp( tonumber( height ), 36, 100 ) )
