@@ -126,14 +126,14 @@ function ENT:Think()
 	end
 
 	-- check sound is playing
-	if ( !self.HoverSoundPlaying && !self:IsGrinding() ) then
+	if ( !self.HoverSoundPlaying and !self:IsGrinding() ) then
 
 		-- setup sound
 		self.HoverSound:SetSoundLevel( 60 )
 		self.HoverSound:Play()
 		self.HoverSoundPlaying = true
 
-	elseif ( self.HoverSoundPlaying && self:IsGrinding() ) then
+	elseif ( self.HoverSoundPlaying and self:IsGrinding() ) then
 
 		-- stop playing
 		self.HoverSound:Stop()
@@ -164,7 +164,7 @@ function ENT:Think()
 	end
 
 	-- check sound
-	if ( self.HoverSoundPlaying && self:GetUp().z < 0.33 ) then
+	if ( self.HoverSoundPlaying and self:GetUp().z < 0.33 ) then
 
 		-- stop sound
 		self.HoverSound:Stop()
@@ -173,7 +173,7 @@ function ENT:Think()
 	end
 
 	-- received my effects?
-	if ( !self.EffectsInitailized && tonumber( self:GetEffectCount() ) ) then
+	if ( !self.EffectsInitailized and tonumber( self:GetEffectCount() ) ) then
 
 		-- all done?
 		local done = true
@@ -185,8 +185,8 @@ function ENT:Think()
 			if ( !self.Effects[ i ] ) then
 
 				-- have all the attributes of it?
-				if ( !self:GetNWString( "Effect" .. i, false ) || !self:GetNWVector( "EffectPos" .. i, false ) ||
-					!self:GetNWVector( "EffectNormal" .. i, false ) || !self:GetNWFloat( "EffectScale" .. i, false ) ) then
+				if ( !self:GetNWString( "Effect" .. i, false ) or !self:GetNWVector( "EffectPos" .. i, false ) or
+					!self:GetNWVector( "EffectNormal" .. i, false ) or !self:GetNWFloat( "EffectScale" .. i, false ) ) then
 
 					-- not done, this effect isn't here yet
 					done = false
@@ -246,7 +246,7 @@ function ENT:Draw( flags )
 			--local point = phys:LocalToWorld( self.ThrusterPoints[ i ].Pos )
 			local point = self:GetThruster( i )
 
-			local tracelen = tonumber( self:GetHoverHeight() ) - ( self.ThrusterPoints[ i ].Diff || 0 )
+			local tracelen = tonumber( self:GetHoverHeight() ) - ( self.ThrusterPoints[ i ].Diff or 0 )
 
 			-- trace for solid
 			local trace = {
@@ -262,7 +262,7 @@ function ENT:Draw( flags )
 				color = Color( 255, 128, 128, 255 )
 			end
 
-			local scale = ( self.ThrusterPoints[ i ].Spring || 1 ) * 0.5
+			local scale = ( self.ThrusterPoints[ i ].Spring or 1 ) * 0.5
 			local sprite = 16 * scale
 			local beam = 4 * scale
 
@@ -301,13 +301,13 @@ hook.Add( "PlayerBindPress", "Hoverboard_PlayerBindPress", function( pl, bind, p
 	local board = pl:GetNWEntity( "ScriptedVehicle" )
 
 	-- make sure they are using the hoverboard
-	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" ) then return end
 
 	-- loop
 	for _, block in pairs( blocked ) do
 
 		-- found?
-		if ( bind:find( block ) ) then return true /* block */ end
+		if ( bind:find( block ) ) then return true --[[ block ]] end
 
 	end
 
@@ -322,7 +322,7 @@ hook.Add( "HUDPaint", "Hoverboard_HUDPaint", function()
 		local tr = LocalPlayer():GetEyeTrace()
 
 		-- check for board
-		if ( IsValid( tr.Entity ) && tr.Entity:GetClass() == "modulus_hoverboard" ) then
+		if ( IsValid( tr.Entity ) and tr.Entity:GetClass() == "modulus_hoverboard" ) then
 
 			local pos = tr.Entity:WorldToLocal( tr.HitPos ) -- get coordinates
 			local text = ("Coords: %s"):format( tostring( pos ) ) -- build string
@@ -351,8 +351,8 @@ hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fo
 	local ent = pl:GetNWEntity( "ScriptedVehicle" )
 
 	pl.ShouldDisableLegs = false -- For some legs mod?
-	if ( !IsValid( ent ) || ent:GetClass() != "modulus_hoverboard" ) then return end
-	if ( pl:InVehicle() || !pl:Alive() || pl:GetViewEntity() != pl ) then return end
+	if ( !IsValid( ent ) or ent:GetClass() != "modulus_hoverboard" ) then return end
+	if ( pl:InVehicle() or !pl:Alive() or pl:GetViewEntity() != pl ) then return end
 	pl.ShouldDisableLegs = true
 
 	-- Smooth the view distance
@@ -377,7 +377,7 @@ hook.Add( "CalcView", "__111hoverboards_calcview", function( pl, campos, ang, fo
 
 	-- Shake their view
 	local speed = ent:GetVelocity():Length() - 500
-	if ( ent:IsBoosting() && speed > 0 && ent:GetBoostShake() ) then
+	if ( ent:IsBoosting() and speed > 0 and ent:GetBoostShake() ) then
 
 		local power = 14 * ( speed / 700 )
 

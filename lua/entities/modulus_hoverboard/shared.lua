@@ -78,7 +78,7 @@ hook.Add( "Move", "Hoverboard_Move", function( pl, mv )
 	local board = pl:GetNWEntity( "ScriptedVehicle" )
 
 	-- make sure they are using the hoverboard
-	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" ) then return end
 
 	-- set their origin
 	mv:SetOrigin( board:GetPos() )
@@ -91,7 +91,7 @@ end )
 hook.Add( "PlayerNoClip", "Hoverboard_DisallowOnboardNoclip", function( ply, desiredState )
 
 	local board = ply:GetNWEntity( "ScriptedVehicle" )
-	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" ) then return end
 
 	-- Do not allow to disable noclip on the board
 	-- Other mods will probably mess this up, but its no big deal
@@ -104,7 +104,7 @@ hook.Add( "UpdateAnimation", "Hoverboard_UpdateAnimation", function( pl )
 	local board = pl:GetNWEntity( "ScriptedVehicle" ) -- get the scripted vehicle
 
 	-- make sure they are using the hoverboard
-	if ( !IsValid( board ) || board:GetClass() != "modulus_hoverboard" ) then return end
+	if ( !IsValid( board ) or board:GetClass() != "modulus_hoverboard" ) then return end
 
 	-- copy pose parameters
 	local pose_params = { "head_pitch", "head_yaw", "body_yaw", "aim_yaw", "aim_pitch" }

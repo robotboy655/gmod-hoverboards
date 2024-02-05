@@ -9,10 +9,10 @@ function PANEL:Init( )
 	self.BoardSelect:Dock( TOP )
 	self.BoardSelect.Label:SetText( "Select Model" )
 
-	/*self.PointsText = vgui.Create( "DLabel", self )
+	--[[self.PointsText = vgui.Create( "DLabel", self )
 	self.PointsText:SetText( "Attribute Points: 0" )
 	self.PointsText:SetDark( true )
-	self.PointsText:SizeToContents()*/
+	self.PointsText:SizeToContents()]]
 
 	self:AddAttribute( "Speed", 1, 16 )
 	self:AddAttribute( "Jump", 0, 16 )
@@ -30,14 +30,14 @@ function PANEL:PerformLayout( )
 
 end
 
-/*local HoverPoints = 5
+--[[local HoverPoints = 5
 net.Receive( "rb655_hoverpoints", function()
 	HoverPoints = tonumber( net.ReadString() )
-end )*/
+end )]]
 
 function PANEL:Think()
 
-	/*local points = HoverPoints
+	--[[local points = HoverPoints
 
 	if ( points != self.AttributePoints ) then
 
@@ -55,7 +55,7 @@ function PANEL:Think()
 
 		self:UpdatePoints()
 
-	end*/
+	end]]
 
 	if ( self.HoverboardTable ) then
 
@@ -71,7 +71,7 @@ function PANEL:Think()
 
 			end
 
-			/*for _, board in pairs( self.HoverboardTable ) do
+			--[[for _, board in pairs( self.HoverboardTable ) do
 
 				if ( selected:lower() == board[ "model" ]:lower() ) then
 
@@ -94,7 +94,7 @@ function PANEL:Think()
 
 				end
 
-			end*/
+			end]]
 
 		end
 
@@ -120,7 +120,7 @@ function PANEL:GetUsedPoints( ignore )
 
 	local count = 0
 
-	/*for _, panel in pairs( self.Attributes ) do
+	--[[for _, panel in pairs( self.Attributes ) do
 
 		if ( panel != ignore ) then
 
@@ -128,18 +128,18 @@ function PANEL:GetUsedPoints( ignore )
 
 		end
 
-	end*/
+	end]]
 
 	return count
 
 end
 
-/*function PANEL:UpdatePoints( )
+--[[function PANEL:UpdatePoints()
 
 	self.PointsText:SetText( ( "Attribute Points: %d/%s" ):format( self.AttributePoints - self:GetUsedPoints(), self.AttributePoints ) )
 	self.PointsText:SizeToContents()
 
-end*/
+end]]
 
 function PANEL:AddAttribute( name, min, max )
 
@@ -165,7 +165,7 @@ function PANEL:AddAttribute( name, min, max )
 		val = math.Clamp( tonumber( val ), slider:GetMin(), slider:GetMax() )
 		slider:SetValue( val )
 
-		/*local count = self:GetUsedPoints( slider )
+		--[[local count = self:GetUsedPoints( slider )
 
 		if ( count + val > self.AttributePoints ) then
 
@@ -178,7 +178,7 @@ function PANEL:AddAttribute( name, min, max )
 
 		end
 
-		self:UpdatePoints()*/
+		self:UpdatePoints()]]
 
 	end
 

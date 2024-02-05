@@ -24,7 +24,7 @@ function ENT:SetPlayer( pl )
 
 	self:SetNWEntity( "Player", pl )
 
-	if ( IsValid( pl ) && pl:IsPlayer() ) then
+	if ( IsValid( pl ) and pl:IsPlayer() ) then
 
 		self.Model = pl:GetModel()
 		self:SetModel( self.Model )

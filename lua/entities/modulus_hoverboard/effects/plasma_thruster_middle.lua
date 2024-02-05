@@ -14,7 +14,7 @@ end
 
 function EFFECT:ShouldRender( )
 
-	if ( self.Board:IsGrinding() || self.Board:GetUp().z < 0.33 || self.Board:WaterLevel() > 0 ) then return false end
+	if ( self.Board:IsGrinding() or self.Board:GetUp().z < 0.33 or self.Board:WaterLevel() > 0 ) then return false end
 
 	return true
 

@@ -132,7 +132,7 @@ function ENT:SetDriver( pl )
 			self:SetGrinding( false )
 			self:SetBoosting( false )
 
-			if ( self.OldWeapon && driver:HasWeapon( self.OldWeapon ) ) then
+			if ( self.OldWeapon and driver:HasWeapon( self.OldWeapon ) ) then
 				driver:SelectWeapon( self.OldWeapon )
 			end
 
@@ -150,7 +150,7 @@ function ENT:SetDriver( pl )
 	if ( IsValid( pl ) ) then
 
 		-- can we get on it?
-		if ( GetConVarNumber( "sv_hoverboard_canshare" ) < 1 && pl:UniqueID() != self.Creator ) then
+		if ( GetConVarNumber( "sv_hoverboard_canshare" ) < 1 and pl:UniqueID() != self.Creator ) then
 			return
 		end
 
@@ -345,7 +345,7 @@ function ENT:Think()
 		end
 
 		-- maintain the animation
-		if ( driver:Alive() && driver:IsConnected() ) then
+		if ( driver:Alive() and driver:IsConnected() ) then
 
 			-- change the animation
 			SetPlayerAnimation( driver )
@@ -597,7 +597,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		end
 
 		-- should we apply forces to this thruster?
-		if ( tr.Fraction < 1 && tr.Fraction > 0 ) then
+		if ( tr.Fraction < 1 and tr.Fraction > 0 ) then
 
 			-- increment contacts
 			self.Contacts = self.Contacts + 1
@@ -627,7 +627,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	end
 
 	-- don't apply the forces if we're not upright. ( we can flip upside down whilst in the air )
-	if ( self.Contacts > 0 && !self:IsUpright( phys ) ) then
+	if ( self.Contacts > 0 and !self:IsUpright( phys ) ) then
 
 		return SIM_NOTHING
 
@@ -678,16 +678,16 @@ function ENT:PhysicsSimulate( phys, deltatime )
 				local diff = math.NormalizeAngle( ang1.y - ang2.y )
 
 				-- calculate the delta
-				local delta = ( diff > 0 ) && 1 or -1
+				local delta = ( diff > 0 ) and 1 or -1
 
 				-- calculate the speed, x3 to make it a lot more responsive at higher Turn attribute values
 				speed = ( 180 * delta ) - diff
 				speed = math.Clamp( speed * 3, -rotation_speed, rotation_speed )
 
 				-- we are turning.
-				if ( ( diff > 0 && diff < 150 ) or ( diff < 0 && diff > -150 ) ) then driver.IsTurning = true end
+				if ( ( diff > 0 and diff < 150 ) or ( diff < 0 and diff > -150 ) ) then driver.IsTurning = true end
 
-				if ( !driver:KeyDown( IN_FORWARD ) && !driver:KeyDown( IN_BACK ) ) then
+				if ( !driver:KeyDown( IN_FORWARD ) and !driver:KeyDown( IN_BACK ) ) then
 
 					-- rotate left
 					if ( driver:KeyDown( IN_MOVELEFT ) ) then
@@ -746,7 +746,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		if ( self:IsBoosting() ) then forward_speed = forward_speed * 1.5 end
 
 		-- Move forward
-		if ( driver:KeyDown( IN_FORWARD ) && self.Contacts >= 1 ) then
+		if ( driver:KeyDown( IN_FORWARD ) and self.Contacts >= 1 ) then
 
 			local forcel, forcea = self:ApplyForwardForce( phys, -forward_speed, thruster_mass )
 			angular = angular + forcea
@@ -755,7 +755,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		end
 
 		-- Move backward
-		if ( driver:KeyDown( IN_BACK ) && self.Contacts >= 1 ) then
+		if ( driver:KeyDown( IN_BACK ) and self.Contacts >= 1 ) then
 
 			local forcel, forcea = self:ApplyForwardForce( phys, forward_speed, thruster_mass )
 			angular = angular + forcea
@@ -822,7 +822,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			end
 
 			-- pitch forward
-			if ( driver:KeyDown( IN_FORWARD ) && self.CanPitch ) then
+			if ( driver:KeyDown( IN_FORWARD ) and self.CanPitch ) then
 
 				local force = self:ApplyPitchForce( phys, -pitch_speed, thruster_mass )
 				angular = angular + force
@@ -830,7 +830,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 			end
 
 			-- pitch back
-			if ( driver:KeyDown( IN_BACK ) && self.CanPitch ) then
+			if ( driver:KeyDown( IN_BACK ) and self.CanPitch ) then
 
 				local force = self:ApplyPitchForce( phys, pitch_speed, thruster_mass )
 				angular = angular + force
@@ -873,7 +873,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	if ( self.Contacts > 0 ) then fric_contacts = thrusters end
 
 	-- Apply friction
-	linear = linear + ( friction * deltatime * ( self:IsGrinding() && 10 or 400 ) * ( ( 1 / thrusters ) * fric_contacts ) )
+	linear = linear + ( friction * deltatime * ( self:IsGrinding() and 10 or 400 ) * ( ( 1 / thrusters ) * fric_contacts ) )
 
 	-- Damping
 	angular = angular + angular_damping * deltatime * 750
@@ -925,11 +925,11 @@ hook.Add( "KeyPress", "Hoverboard_KeyPress", function( pl, in_key )
 	end
 
 	-- Jump
-	--if ( in_key == IN_JUMP && board.Contacts >= 3 && board.WaterContacts < 2 ) then
-	if ( in_key == IN_JUMP && board.Contacts >= 2 && ( board.WaterContacts < 2 or GetConVarNumber( "sv_hoverboard_water_jump" ) != 0 ) ) then board.Jumped = true end
+	--if ( in_key == IN_JUMP and board.Contacts >= 3 and board.WaterContacts < 2 ) then
+	if ( in_key == IN_JUMP and board.Contacts >= 2 and ( board.WaterContacts < 2 or GetConVarNumber( "sv_hoverboard_water_jump" ) != 0 ) ) then board.Jumped = true end
 
 	-- Boost
-	if ( in_key == IN_SPEED && !board:IsBoosting() && board:Boost() == 100 ) then board:SetBoosting( true ) /* turn on boost */ end
+	if ( in_key == IN_SPEED and !board:IsBoosting() and board:Boost() == 100 ) then board:SetBoosting( true ) --[[] turn on boost ]] end
 
 end )
 
@@ -1051,8 +1051,8 @@ end
 hook.Add( "EntityTakeDamage", "Hoverboard_EntityTakeDamage", function( ent, dmginfo )
 
 	local inflictor = dmginfo:GetInflictor()
-	if ( IsValid( inflictor ) && GetConVarNumber( "sv_hoverboard_allow_damage" ) == 0
-		&& ( inflictor:GetClass() == "modulus_hoverboard" or inflictor:GetClass() == "modulus_hoverboard_hull" ) ) then
+	if ( IsValid( inflictor ) and GetConVarNumber( "sv_hoverboard_allow_damage" ) == 0
+		and ( inflictor:GetClass() == "modulus_hoverboard" or inflictor:GetClass() == "modulus_hoverboard_hull" ) ) then
 
 		dmginfo:SetDamage( 0 )
 

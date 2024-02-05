@@ -24,7 +24,7 @@ function EFFECT:Think( id )
 	self.ID = id
 
 	-- time to update?
-	if ( self.NextPoint > UnPredictedCurTime() || self.Board:GetBoardVelocity() < 150 || self.Board:IsGrinding() ) then return end
+	if ( self.NextPoint > UnPredictedCurTime() or self.Board:GetBoardVelocity() < 150 or self.Board:IsGrinding() ) then return end
 
 	-- add new trail points
 	self.Points[ #self.Points + 1 ] = {
@@ -50,7 +50,7 @@ function EFFECT:Render( )
 	local count = #self.Points;
 
 	-- not enough points to draw the trail
-	if (  self.Board:IsGrinding() || self.Board:WaterLevel() > 0 ) then return end
+	if (  self.Board:IsGrinding() or self.Board:WaterLevel() > 0 ) then return end
 
 	-- alpha
 	local alpha = self:RemapValClamped( self.Board:GetBoardVelocity(), 150, 1000, 0, 255 )
@@ -71,7 +71,7 @@ function EFFECT:Render( )
 
 		color = Color( Lerp( percent, boost_color.r, recharge_color.r ), Lerp( percent, boost_color.g, recharge_color.g ), Lerp( percent, boost_color.b, recharge_color.b ), 255 )
 
-	elseif ( !self.Board:IsBoosting() && self.Board:Boost() < 100 ) then
+	elseif ( !self.Board:IsBoosting() and self.Board:Boost() < 100 ) then
 
 		local percent = self.Board:Boost() / 100
 

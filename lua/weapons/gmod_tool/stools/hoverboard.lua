@@ -40,7 +40,7 @@ for _, hbt in pairs( HoverboardTypes ) do
 	list.Set( "HoverboardModels", hbt.model, {} )
 	util.PrecacheModel( hbt.model )
 
-	if ( SERVER && GetConVarNumber( "rb655_force_downloads" ) > 0 ) then
+	if ( SERVER and GetConVarNumber( "rb655_force_downloads" ) > 0 ) then
 
 		resource.AddFile( hbt.model )
 
@@ -77,7 +77,7 @@ function TOOL:RightClick( trace )
 
 			timer.Simple( 0.25, function()
 
-				if ( IsValid( hoverboard ) && IsValid( pl ) ) then hoverboard:SetDriver( pl ) end
+				if ( IsValid( hoverboard ) and IsValid( pl ) ) then hoverboard:SetDriver( pl ) end
 
 			end )
 
@@ -96,7 +96,7 @@ function TOOL:CreateBoard( trace )
 	-- Stuff is clamped in MakeHoverboard
 
 	local pl = self:GetOwner()
-	if ( GetConVarNumber( "sv_hoverboard_adminonly" ) > 0 && !( pl:IsAdmin() or pl:IsSuperAdmin() ) ) then return false end
+	if ( GetConVarNumber( "sv_hoverboard_adminonly" ) > 0 and !( pl:IsAdmin() or pl:IsSuperAdmin() ) ) then return false end
 
 	local model = self:GetClientInfo( "model" )
 	local mcontrol = self:GetClientNumber( "mousecontrol" )
@@ -144,7 +144,7 @@ if ( SERVER ) then
 
 	function MakeHoverboard( pl, model, ang, pos, mcontrol, shake, height, viewdist, trailsize, trail, boost, recharge, attributes )
 
-		if ( IsValid( pl ) && !pl:CheckLimit( "hoverboards" ) ) then return false end
+		if ( IsValid( pl ) and !pl:CheckLimit( "hoverboards" ) ) then return false end
 
 		local hoverboard = ents.Create( "modulus_hoverboard" )
 		if ( !IsValid( hoverboard ) ) then return false end
@@ -193,7 +193,7 @@ if ( SERVER ) then
 
 		for k, v in pairs( boardinfo ) do
 
-			if ( k:sub( 1, 7 ):lower() == "effect_" && type( boardinfo[ k ] ) == "table" ) then
+			if ( k:sub( 1, 7 ):lower() == "effect_" and type( boardinfo[ k ] ) == "table" ) then
 
 				local effect = boardinfo[ k ]
 
@@ -216,7 +216,7 @@ if ( SERVER ) then
 		hoverboard:SetTrailRechargeColor( recharge )
 
 		-- DISABLED: Overall attribute limit. This belongs in a gamemode, not in a Sandbox tool
-		/*local count = 0
+		--[[local count = 0
 		local points = GetConVarNumber( "sv_hoverboard_points" )
 
 		for k, v in pairs( attributes ) do
@@ -231,10 +231,10 @@ if ( SERVER ) then
 
 			count = count + v
 
-		end*/
+		end]]
 
 		-- DISABLED: Per hoverboard bonus attribs
-		/*for k, v in pairs( boardinfo.bonus or {} ) do
+		--[[for k, v in pairs( boardinfo.bonus or {} ) do
 
 			if ( attributes[ k ] ) then
 
@@ -242,7 +242,7 @@ if ( SERVER ) then
 
 			end
 
-		end*/
+		end]]
 
 		-- Clamp the attribs, this should match the UI
 		attributes.speed = math.Clamp( attributes.speed, 1, 16 )

@@ -12,21 +12,21 @@ if ( SERVER ) then
 	CreateConVar( "sv_hoverboard_allow_damage", 1, { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 	--CreateConVar( "sv_hoverboard_points", "45", { FCVAR_NOTIFY, FCVAR_ARCHIVE } )
 
-	/*util.AddNetworkString("rb655_hoverpoints")
+	--[[util.AddNetworkString("rb655_hoverpoints")
 	timer.Create( "HoverPointsThink", 5, 0, function()
 		net.Start("rb655_hoverpoints")
 			net.WriteString( GetConVarString( "sv_hoverboard_points" ) )
 		net.Broadcast()
-	end )*/
+	end )]]
 
 	--CreateConVar( "rb655_force_downloads", "0", FCVAR_ARCHIVE )
 
-	/*if ( GetConVarNumber( "rb655_force_downloads" ) > 0 ) then
+	--[[if ( GetConVarNumber( "rb655_force_downloads" ) > 0 ) then
 		resource.AddFile( "materials/modulus_hoverboard/glow.vmt" )
 		resource.AddFile( "materials/modulus_hoverboard/trail.vmt" )
 		resource.AddFile( "materials/modulus_hoverboard/deathicon.vmt" )
 		resource.AddFile( "materials/modulus_hoverboard/deathicon.vtf" )
-	end*/
+	end]]
 
 	resource.AddWorkshop( 150455514 )
 else
@@ -41,9 +41,9 @@ else
 	killicon.AddAlias( "modulus_hoverboard_avatar", "modulus_hoverboard" )
 end
 
-/* ------------------------------------------------
+--[[ ----------------------------------------------
 	Hoverboard Types
------------------------------------------------- */
+------------------------------------------------ ]]
 
 HoverboardTypes = {}
 

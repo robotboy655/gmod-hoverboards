@@ -47,7 +47,7 @@ function ENT:Think()
 	if ( GetConVarNumber( "sv_hoverboard_canfall" ) == 1 ) then
 
 		local phys = self:GetPhysicsObject()
-		if ( IsValid( phys ) && phys:IsPenetrating() ) then
+		if ( IsValid( phys ) and phys:IsPenetrating() ) then
 
 			local board = self:GetOwner()
 			if ( IsValid( board ) ) then
@@ -75,7 +75,7 @@ end
 function ENT:PhysicsCollide( data, phys )
 
 	local board = self:GetOwner()
-	if ( !IsValid( self.Player ) || !IsValid( board ) || GetConVarNumber( "sv_hoverboard_canfall" ) == 0 ) then return end
+	if ( !IsValid( self.Player ) or !IsValid( board ) or GetConVarNumber( "sv_hoverboard_canfall" ) == 0 ) then return end
 
 	-- Is the board upside down? If so, boot the player. Timer to avoid the message about crashing in a physics hook
 	if ( board:GetUp().z < 0.33 ) then timer.Simple( 0, function() board:SetDriver( NULL ) end ) end
